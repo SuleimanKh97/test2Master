@@ -1,0 +1,8 @@
+table img {
+  border-radius: 6px;
+}
+
+input[type="number"] {
+  width: 80px;
+  margin: auto;
+}

@@ -1,0 +1,47 @@
+<div class="order-history-container" dir="rtl">
+    <h2>سجل الطلبات</h2>
+
+    <div *ngIf="isLoading" class="loading-message">
+        <p>جاري تحميل الطلبات...</p>
+        <!-- Optional: Add spinner -->
+    </div>
+
+    <div *ngIf="errorMessage" class="alert alert-danger">
+        <p>خطأ: {{ errorMessage }}</p>
+    </div>
+
+    <div *ngIf="!isLoading && !errorMessage">
+        <div *ngIf="orders.length > 0; else noOrders" class="orders-list">
+            <table class="table table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th>رقم الطلب</th>
+                        <th>تاريخ الطلب</th>
+                        <th>الحالة</th>
+                        <th>المجموع الإجمالي</th>
+                        <th>الإجراءات</th> <!-- Optional column for details button -->
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let order of orders">
+                        <td>{{ order.id }}</td>
+                        <td>{{ order.createdAt | date:'yyyy/MM/dd HH:mm' }}</td>
+                        <td>{{ order.status }}</td>
+                        <td>{{ order.totalPrice | currency:'JOD' }}</td> <!-- Adjust currency as needed -->
+                        <td>
+                            <!-- Optional: Button/Link to view order details -->
+                            <!-- <button class="btn btn-sm btn-info" [routerLink]="['/order-details', order.id]">التفاصيل</button> -->
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <ng-template #noOrders>
+            <div class="alert alert-info">
+                <p>لا توجد طلبات سابقة لعرضها.</p>
+            </div>
+        </ng-template>
+    </div>
+
+</div>

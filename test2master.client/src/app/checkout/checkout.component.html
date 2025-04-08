@@ -1,0 +1,82 @@
+<div class="checkout-container" dir="rtl">
+    <h2>إتمام الطلب</h2>
+
+    <div *ngIf="successMessage" class="alert alert-success">
+        {{ successMessage }}
+    </div>
+    <div *ngIf="errorMessage" class="alert alert-danger">
+        {{ errorMessage }}
+    </div>
+
+    <!-- Optional: Cart Summary -->
+    <!-- 
+  <div class="cart-summary mb-4 card p-3">
+      <h4>ملخص السلة</h4>
+      <div *ngIf="(cartService.cartItems$ | async) as items">
+          <ul>
+              <li *ngFor="let item of items">
+                  {{ item.product.name }} ({{ item.quantity }})
+              </li>
+          </ul>
+          <strong>الإجمالي: {{ (cartService.cartTotal$ | async) | currency:'JOD' }}</strong>
+      </div>
+      <div *ngIf="!(cartService.cartItems$ | async)?.length">
+          <p>السلة فارغة.</p>
+      </div>
+  </div> 
+  -->
+
+    <form [formGroup]="checkoutForm" (ngSubmit)="onSubmit()" *ngIf="!successMessage"> <!-- Hide form on success -->
+        <h4>تفاصيل الدفع والشحن</h4>
+
+        <!-- Payment Method -->
+        <div class="mb-3">
+            <label class="form-label d-block mb-2">طريقة الدفع</label>
+            <div class="payment-options">
+                <!-- Cash on Delivery Option -->
+                <label class="payment-option" for="cod">
+                    <input class="payment-option-input" type="radio" id="cod" value="CashOnDelivery"
+                        formControlName="paymentMethod">
+                    <div class="payment-option-content">
+                        <i class="fas fa-money-bill-wave payment-icon"></i> <!-- Icon for COD -->
+                        <span>الدفع عند الاستلام</span>
+                    </div>
+                </label>
+
+                <!-- PayPal Option -->
+                <label class="payment-option" for="paypal">
+                    <input class="payment-option-input" type="radio" id="paypal" value="PayPal"
+                        formControlName="paymentMethod">
+                    <div class="payment-option-content">
+                        <i class="fab fa-paypal payment-icon"></i> <!-- Icon for PayPal -->
+                        <span>PayPal</span>
+                    </div>
+                </label>
+            </div>
+
+            <!-- Add validation message if needed -->
+            <div *ngIf="submitted && f['paymentMethod'].errors?.['required']" class="text-danger small mt-2">
+                يرجى اختيار طريقة الدفع.
+            </div>
+        </div>
+
+        <!-- Add Address Fields Here Later -->
+        <!-- 
+    <div class="mb-3">
+      <label for="addressLine1" class="form-label">العنوان</label>
+      <input type="text" id="addressLine1" formControlName="addressLine1" class="form-control" 
+             [ngClass]="{ 'is-invalid': submitted && f['addressLine1'].errors }">
+      <div *ngIf="submitted && f['addressLine1'].errors" class="invalid-feedback">
+          مطلوب.
+      </div>
+    </div>
+    -->
+
+        <button type="submit" class="btn btn-primary w-100" [disabled]="isLoading">
+            <span *ngIf="isLoading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+            <span *ngIf="f['paymentMethod'].value === 'PayPal'">المتابعة إلى PayPal</span>
+            <span *ngIf="f['paymentMethod'].value !== 'PayPal'">تأكيد الطلب</span>
+        </button>
+    </form>
+
+</div>

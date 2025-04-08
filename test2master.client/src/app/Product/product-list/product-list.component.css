@@ -1,0 +1,36 @@
+.product-list-header {
+  background-color: var(--background);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.product-list-content {
+  background-color: white;
+}
+
+.product-card {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  .product-info
+
+{
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  .mt-3
+
+{
+  margin-top: auto !important;
+}
+
+}
+}
+
+.spinner-border {
+  width: 3rem;
+  height: 3rem;
+}
+
+.fa-box-open {
+  color: var(--primary);
+}

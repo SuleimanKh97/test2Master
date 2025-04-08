@@ -1,0 +1,70 @@
+<section class="product-detail-content py-5">
+  <div class="container">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb" class="mb-4">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a routerLink="/">الرئيسية</a></li>
+        <li class="breadcrumb-item"><a routerLink="/shop">المتجر</a></li>
+        <li class="breadcrumb-item active" aria-current="page" *ngIf="product">{{ product.name }}</li>
+        <li class="breadcrumb-item active" aria-current="page" *ngIf="!product && !loading">منتج غير موجود</li>
+      </ol>
+    </nav>
+
+    <!-- Loading State -->
+    <div class="text-center py-5" *ngIf="loading">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">جاري التحميل...</span>
+      </div>
+      <p class="mt-3">جاري تحميل تفاصيل المنتج...</p>
+    </div>
+
+    <!-- Error State -->
+    <div class="alert alert-danger" *ngIf="error">
+      {{ error }}
+      <p class="mt-3">
+        <a routerLink="/shop" class="btn btn-outline-primary">العودة إلى المتجر</a>
+      </p>
+    </div>
+
+    <!-- Product Details -->
+    <div class="row" *ngIf="product && !loading">
+      <div class="col-lg-6 mb-4">
+        <div class="product-image-container">
+          <img [src]="product.imageUrl" [alt]="product.name" class="img-fluid product-detail-image">
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <div class="product-info">
+          <h1 class="product-title">{{ product.name }}</h1>
+
+          <div class="product-price mb-4">
+            <span class="current-price">{{ product.price | currency:'JOD ':'symbol':'1.2-2' }}</span>
+            <span class="original-price">{{ product.originalPrice | currency:'JOD ':'symbol':'1.2-2' }}</span>
+          </div>
+
+          <div class="product-description mb-4">
+            <p>منتج مميز من سوق الحلال، نضمن لك جودة عالية ومعاملة مميزة.</p>
+            <p *ngIf="product.description">{{ product.description }}</p>
+          </div>
+
+          <div class="product-status mb-4" *ngIf="product.inStock">
+            <span class="badge bg-success">متوفر</span>
+          </div>
+
+          <div class="product-status mb-4" *ngIf="!product.inStock">
+            <span class="badge bg-danger">غير متوفر</span>
+          </div>
+
+          <div class="product-actions">
+            <button class="btn btn-primary btn-lg me-2" (click)="addToCart()" [disabled]="!product.inStock">
+              <i class="fas fa-shopping-cart me-2"></i>إضافة إلى السلة
+            </button>
+            <a routerLink="/shop" class="btn btn-outline-secondary btn-lg">
+              العودة إلى المتجر
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

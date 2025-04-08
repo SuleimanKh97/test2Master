@@ -1,0 +1,46 @@
+<!-- seller-dashboard.component.html -->
+<div class="container py-5">
+  <h2 class="mb-4">لوحة تحكم البائع</h2>
+
+  <div class="mb-3">
+    <button class="btn btn-primary" routerLink="/seller/products/add">
+      إضافة منتج جديد
+    </button>
+  </div>
+
+  <div class="table-responsive">
+    <table class="table table-striped">
+      <thead class="table-dark">
+        <tr>
+          <th>المنتج</th>
+          <th>السعر</th>
+          <th>الحالة</th>
+          <th>إجراءات</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!--<tr *ngFor="let product of sellerProducts">-->
+        <tr>
+
+          <td> product.name </td>
+          <td> product.price | currency:'JOD':'symbol' </td>
+          <td>
+            <!--<span [ngClass]="product.inStock ? 'text-success' : 'text-danger'">-->
+            <span>
+
+              product.inStock ? 'متوفر' : 'غير متوفر'
+            </span>
+          </td>
+          <td>
+            <button class="btn btn-sm btn-warning"></button>
+            <!--<button class="btn btn-sm btn-warning" (click)="editProduct(product.id)">تعديل</button>-->
+
+            <button class="btn btn-sm btn-danger">حذف</button>
+            <!--<button class="btn btn-sm btn-danger" (click)="deleteProduct(product.id)">حذف</button>-->
+
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

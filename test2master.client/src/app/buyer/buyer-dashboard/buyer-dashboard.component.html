@@ -1,0 +1,183 @@
+<div class="page-title">
+  <div class="container">
+    <h1>حسابي</h1>
+  </div>
+</div>
+
+<div class="profile-section">
+  <div class="container">
+    <div class="profile-wrapper">
+      <!-- Profile Sidebar -->
+      <div class="profile-sidebar">
+        <div class="user-info">
+          <div class="user-avatar">
+            <i class="fas fa-user-circle"></i>
+          </div>
+          <h3>{{ userData.firstName }} {{ userData.lastName }}</h3>
+          <p>{{ userData.email }}</p>
+        </div>
+        <div class="profile-menu">
+          <ul>
+            <li class="active"><a href="#personal-info">البيانات الشخصية</a></li>
+            <li><a href="#password-section">تغيير كلمة المرور</a></li>
+            <li><a href="#">طلباتي</a></li>
+            <li><a href="#">العناوين</a></li>
+            <li><a href="#" (click)="logout()">تسجيل الخروج</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Profile Content -->
+      <div class="profile-content">
+        <!-- Personal Information Form -->
+        <div id="personal-info" class="profile-card">
+          <h2>البيانات الشخصية</h2>
+
+          <div *ngIf="successMessage" class="success-message">
+            {{ successMessage }}
+          </div>
+
+          <div *ngIf="errorMessage" class="error-message">
+            {{ errorMessage }}
+          </div>
+
+          <form [formGroup]="profileForm" (ngSubmit)="onSubmit()">
+            <div class="form-row two-columns">
+              <div class="form-group">
+                <label for="firstName">الاسم الأول <span class="required">*</span></label>
+                <input type="text"
+                       id="firstName"
+                       formControlName="firstName"
+                       [ngClass]="{ 'is-invalid': submitted && f['firstName'].errors }" />
+                <div *ngIf="submitted && f['firstName'].errors" class="error-message">
+                  <div *ngIf="f['firstName'].errors['required']">الاسم الأول مطلوب</div>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="lastName">الاسم الأخير <span class="required">*</span></label>
+                <input type="text"
+                       id="lastName"
+                       formControlName="lastName"
+                       [ngClass]="{ 'is-invalid': submitted && f['lastName'].errors }" />
+                <div *ngIf="submitted && f['lastName'].errors" class="error-message">
+                  <div *ngIf="f['lastName'].errors['required']">الاسم الأخير مطلوب</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="username">اسم المستخدم</label>
+              <input type="text"
+                     id="username"
+                     formControlName="username" />
+              <small class="form-text text-muted">لا يمكن تغيير اسم المستخدم</small>
+            </div>
+
+            <div class="form-row two-columns">
+              <div class="form-group">
+                <label for="email">البريد الإلكتروني <span class="required">*</span></label>
+                <input type="email"
+                       id="email"
+                       formControlName="email"
+                       [ngClass]="{ 'is-invalid': submitted && f['email'].errors }" />
+                <div *ngIf="submitted && f['email'].errors" class="error-message">
+                  <div *ngIf="f['email'].errors['required']">البريد الإلكتروني مطلوب</div>
+                  <div *ngIf="f['email'].errors['email']">الرجاء إدخال بريد إلكتروني صحيح</div>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="phone">رقم الهاتف <span class="required">*</span></label>
+                <input type="text"
+                       id="phone"
+                       formControlName="phone"
+                       [ngClass]="{ 'is-invalid': submitted && f['phone'].errors }" />
+                <div *ngIf="submitted && f['phone'].errors" class="error-message">
+                  <div *ngIf="f['phone'].errors['required']">رقم الهاتف مطلوب</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="address">العنوان</label>
+              <input type="text"
+                     id="address"
+                     formControlName="address" />
+            </div>
+
+            <div class="form-row two-columns">
+              <div class="form-group">
+                <label for="city">المدينة</label>
+                <input type="text"
+                       id="city"
+                       formControlName="city" />
+              </div>
+
+              <div class="form-group">
+                <label for="country">الدولة</label>
+                <input type="text"
+                       id="country"
+                       formControlName="country" />
+              </div>
+            </div>
+
+            <div class="form-actions">
+              <button type="submit" class="btn save-btn">حفظ التغييرات</button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Change Password Form -->
+        <div id="password-section" class="profile-card">
+          <h2>تغيير كلمة المرور</h2>
+
+          <div *ngIf="passwordSuccessMessage" class="success-message">
+            {{ passwordSuccessMessage }}
+          </div>
+
+          <form [formGroup]="passwordForm" (ngSubmit)="onPasswordSubmit()">
+            <div class="form-group">
+              <label for="currentPassword">كلمة المرور الحالية <span class="required">*</span></label>
+              <input type="password"
+                     id="currentPassword"
+                     formControlName="currentPassword"
+                     [ngClass]="{ 'is-invalid': passwordSubmitted && p['currentPassword'].errors }" />
+              <div *ngIf="passwordSubmitted && p['currentPassword'].errors" class="error-message">
+                <div *ngIf="p['currentPassword'].errors['required']">كلمة المرور الحالية مطلوبة</div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="newPassword">كلمة المرور الجديدة <span class="required">*</span></label>
+              <input type="password"
+                     id="newPassword"
+                     formControlName="newPassword"
+                     [ngClass]="{ 'is-invalid': passwordSubmitted && p['newPassword'].errors }" />
+              <div *ngIf="passwordSubmitted && p['newPassword'].errors" class="error-message">
+                <div *ngIf="p['newPassword'].errors['required']">كلمة المرور الجديدة مطلوبة</div>
+                <div *ngIf="p['newPassword'].errors['minlength']">كلمة المرور يجب أن تتكون من 6 أحرف على الأقل</div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="confirmPassword">تأكيد كلمة المرور الجديدة <span class="required">*</span></label>
+              <input type="password"
+                     id="confirmPassword"
+                     formControlName="confirmPassword"
+                     [ngClass]="{ 'is-invalid': passwordSubmitted && p['confirmPassword'].errors }" />
+              <div *ngIf="passwordSubmitted && p['confirmPassword'].errors" class="error-message">
+                <div *ngIf="p['confirmPassword'].errors['required']">تأكيد كلمة المرور مطلوب</div>
+                <div *ngIf="p['confirmPassword'].errors['passwordMismatch']">كلمة المرور وتأكيدها غير متطابقين</div>
+              </div>
+            </div>
+
+            <div class="form-actions">
+              <button type="submit" class="btn save-btn">تغيير كلمة المرور</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

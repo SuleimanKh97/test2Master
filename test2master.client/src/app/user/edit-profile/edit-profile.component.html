@@ -1,0 +1,44 @@
+<div class="edit-profile-container" dir="rtl">
+    <h2>تعديل الملف الشخصي</h2>
+
+    <!-- Display success message -->
+    <div *ngIf="successMessage" class="alert alert-success">
+        {{ successMessage }}
+    </div>
+
+    <!-- Display error message -->
+    <div *ngIf="errorMessage" class="alert alert-danger">
+        {{ errorMessage }}
+    </div>
+
+    <form [formGroup]="editForm" (ngSubmit)="onSubmit()" *ngIf="editForm">
+        <!-- Username Field -->
+        <div class="mb-3">
+            <label for="newUsername" class="form-label">اسم المستخدم</label>
+            <input type="text" id="newUsername" formControlName="newUsername" class="form-control"
+                [ngClass]="{ 'is-invalid': submitted && f['newUsername'].errors }">
+            <div *ngIf="submitted && f['newUsername'].errors" class="invalid-feedback">
+                <div *ngIf="f['newUsername'].errors['required']">اسم المستخدم مطلوب.</div>
+                <div *ngIf="f['newUsername'].errors['minlength']">اسم المستخدم يجب أن يكون 3 أحرف على الأقل.</div>
+            </div>
+        </div>
+
+        <!-- Email Field -->
+        <div class="mb-3">
+            <label for="newEmail" class="form-label">البريد الإلكتروني</label>
+            <input type="email" id="newEmail" formControlName="newEmail" class="form-control"
+                [ngClass]="{ 'is-invalid': submitted && f['newEmail'].errors }">
+            <div *ngIf="submitted && f['newEmail'].errors" class="invalid-feedback">
+                <div *ngIf="f['newEmail'].errors['required']">البريد الإلكتروني مطلوب.</div>
+                <div *ngIf="f['newEmail'].errors['email']">صيغة البريد الإلكتروني غير صحيحة.</div>
+            </div>
+        </div>
+
+        <div class="button-group">
+            <button type="submit" class="btn btn-primary" [disabled]="editForm.pristine && !editForm.dirty">حفظ
+                التغييرات</button>
+            <button type="button" class="btn btn-secondary ms-2" (click)="cancel()">إلغاء</button>
+        </div>
+    </form>
+
+</div>

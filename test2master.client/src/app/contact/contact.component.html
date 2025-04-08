@@ -1,0 +1,90 @@
+<section class="contact-header py-4">
+  <div class="container">
+    <div class="text-center">
+      <h1 class="page-title">اتصل بنا</h1>
+    </div>
+  </div>
+</section>
+
+<section class="contact-content py-5">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-6 mb-4 mb-lg-0">
+        <div class="contact-info-container">
+          <h2>معلومات التواصل</h2>
+          <p>يمكنك التواصل معنا عبر المعلومات التالية أو باستخدام نموذج الاتصال.</p>
+
+          <div class="contact-info-item mt-4">
+            <i class="fas fa-map-marker-alt"></i>
+            <div>
+              <h3>العنوان</h3>
+              <p>الأردن، اربد</p>
+            </div>
+          </div>
+
+          <div class="contact-info-item">
+            <i class="fas fa-phone-alt"></i>
+            <div>
+              <h3>رقم الهاتف</h3>
+              <p><a href="tel:0096277279537">00962777279537</a></p>
+            </div>
+          </div>
+
+          <div class="contact-info-item">
+            <i class="fas fa-envelope"></i>
+            <div>
+              <h3>البريد الإلكتروني</h3>
+              <p><a href="mailto:suleiman97kh&#64;gmail.com">suleiman97kh&#64;gmail.com</a></p>
+            </div>
+          </div>
+
+          <div class="social-media mt-4">
+            <h3>تابعنا على</h3>
+            <div class="social-links">
+              <a href="https://www.facebook.com/ENG.KHASHASHNEH" target="_blank" class="me-3">
+                <i class="fab fa-facebook-f"></i>
+              </a>
+              <a href="https://www.instagram.com/ENG.KHASHASHNEH" target="_blank">
+                <i class="fab fa-instagram"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-6">
+        <div class="contact-form-container">
+          <h2>أرسل رسالة</h2>
+
+          <div class="alert alert-success" *ngIf="formSubmitted">
+            تم إرسال رسالتك بنجاح. سنرد عليك في أقرب وقت ممكن.
+          </div>
+
+          <form (ngSubmit)="submitForm()" #form="ngForm" *ngIf="!formSubmitted">
+            <div class="mb-3">
+              <label for="name" class="form-label">الاسم الكامل*</label>
+              <input type="text" class="form-control" id="name" name="name" [(ngModel)]="contactForm.name" required>
+            </div>
+
+            <div class="mb-3">
+              <label for="email" class="form-label">البريد الإلكتروني*</label>
+              <input type="email" class="form-control" id="email" name="email" [(ngModel)]="contactForm.email" required>
+            </div>
+
+            <div class="mb-3">
+              <label for="phone" class="form-label">رقم الهاتف</label>
+              <input type="tel" class="form-control" id="phone" name="phone" [(ngModel)]="contactForm.phone">
+            </div>
+
+            <div class="mb-3">
+              <label for="message" class="form-label">الرسالة*</label>
+              <textarea class="form-control" id="message" name="message" rows="5" [(ngModel)]="contactForm.message" required></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary" [disabled]="form.invalid">إرسال</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

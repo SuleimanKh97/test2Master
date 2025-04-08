@@ -1,0 +1,160 @@
+<!--<header>
+  <nav class="navbar navbar-expand-lg">
+    <div class="container d-flex align-items-center justify-content-between">-->
+<!-- Logo (Right Side) -->
+<!--<a class="navbar-brand" routerLink="/">
+  <img src="assets/images/logo.png" alt="سوق الحلال">
+</a>-->
+<!-- Toggler (for mobile) -->
+<!--<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+  <i class="fa-solid fa-bars"></i>
+</button>-->
+<!-- Nav & Icons (Left Side) -->
+<!--<div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+  <ul class="navbar-nav align-items-center">
+    <li class="nav-item">
+      <a class="nav-link" routerLink="/" routerLinkActive="active">الرئيسية</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" routerLink="/shop" routerLinkActive="active">المتجر</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-icon position-relative" routerLink="/cart" title="عربة التسوق"
+         (mouseenter)="hovering = true" (mouseleave)="hovering = false">
+        <i class="fa-solid fa-cart-shopping"></i>-->
+<!-- العداد -->
+<!--<span class="badge bg-danger rounded-circle position-absolute top-0 start-100 translate-middle"
+      *ngIf="cartCount$ | async as count">
+  {{ count }}
+</span>-->
+<!-- المعاينة عند الهوفر -->
+<!--<div class="cart-preview p-3 shadow bg-white rounded" *ngIf="hovering">
+        <ng-container *ngIf="(cartService.getCartItems() | async) as items">
+          <div *ngFor="let item of items" class="d-flex justify-content-between mb-2">
+            <span>{{ item.product.name }}</span>
+            <span>{{ item.quantity }} × {{ item.product.price | currency:'JOD' }}</span>
+          </div>
+          <div class="border-top pt-2 mt-2 fw-bold text-end">
+            الإجمالي:
+            {{ (cartService.getCartTotal() | async) | currency:'JOD' }}
+          </div>
+          <a routerLink="/cart" class="btn btn-primary w-100 mt-2">الذهاب إلى السلة</a>
+        </ng-container>
+      </div>
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-cart3" viewBox="0 0 16 16">
+        <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .49.598l-1 5a.5.5 0 0 1-.465.401l-9.397.472L4.415 11H13a.5.5 0 0 1 0 1H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5M3.102 4l.84 4.479 9.144-.459L13.89 4zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4m7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4m-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2m7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2" />
+      </svg>
+    </a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" routerLink="/contact" routerLinkActive="active">اتصل بنا</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" routerLink="/signup" routerLinkActive="active">التسجيل</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" routerLink="/login" routerLinkActive="active">الدخول</a>
+  </li>
+</ul>-->
+<!-- Icons -->
+<!--<div class="d-flex align-items-center ms-4 nav-icons">
+          <a class="nav-icon" routerLink="/search" title="بحث">
+            <i class="fa-solid fa-search"></i>
+          </a>
+          <a class="nav-icon ms-3" routerLink="/cart" title="عربة التسوق">
+            <i class="fa-solid fa-cart-shopping"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>-->
+
+<header>
+  <nav class="navbar navbar-expand-lg">
+    <div class="container d-flex align-items-center justify-content-between">
+      <!-- Logo (Right Side) -->
+      <a class="navbar-brand" routerLink="/">
+        <img src="assets/images/logo.png" alt="سوق الحلال">
+      </a>
+
+      <!-- Toggler (for mobile) -->
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <i class="fa-solid fa-bars"></i>
+      </button>
+
+      <!-- Nav Links & Icons (Left Side) -->
+      <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+        <!-- Main Nav Links (Pushed Right in RTL) -->
+        <ul class="navbar-nav align-items-center me-auto"> <!-- Use me-auto for Bootstrap 5+ -->
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/" routerLinkActive="active"
+              [routerLinkActiveOptions]="{exact: true}">الرئيسية</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/shop" routerLinkActive="active">المتجر</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/contact" routerLinkActive="active">اتصل بنا</a>
+          </li>
+        </ul>
+
+        <!-- Auth Links & Icons (Far Left in RTL) -->
+        <ul class="navbar-nav align-items-center">
+          <!-- Conditional Authentication Links/Dropdown -->
+          <ng-container *ngIf="isLoggedIn && currentUser; else loggedOutLinks">
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownUser" role="button"
+                data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="fas fa-user"></i> مرحباً, {{ currentUser.username }}
+              </a>
+              <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownUser">
+                <li><a class="dropdown-item" routerLink="/profile"><i class="fas fa-id-card"></i> الملف الشخصي</a></li>
+                <li><a class="dropdown-item" routerLink="/order-history"><i class="fas fa-history"></i> سجل الطلبات</a>
+                </li>
+                <li>
+                  <hr class="dropdown-divider">
+                </li>
+                <li><a class="dropdown-item logout-link" href="#" (click)="logout($event)"><i
+                      class="fas fa-sign-out-alt"></i> تسجيل الخروج</a></li>
+              </ul>
+            </li>
+          </ng-container>
+
+          <ng-template #loggedOutLinks>
+            <li class="nav-item">
+              <a class="nav-link" routerLink="/login"><i class="fas fa-sign-in-alt"></i> تسجيل الدخول</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" routerLink="/signup"><i class="fas fa-user-plus"></i> إنشاء حساب</a>
+            </li>
+          </ng-template>
+          <!-- End Conditional Auth Links -->
+
+          <!-- Search Icon -->
+          <li class="nav-item">
+            <a class="nav-link nav-icon" routerLink="/search" title="بحث">
+              <i class="fa-solid fa-search"></i>
+            </a>
+          </li>
+
+          <!-- Cart Icon (Moved to the far left) -->
+          <li class="nav-item">
+            <a class="nav-link nav-icon position-relative" routerLink="/cart" title="عربة التسوق">
+              <i class="fa-solid fa-cart-shopping"></i>
+              <!-- Counter Badge -->
+              <span class="badge bg-danger rounded-circle position-absolute top-0 start-100 translate-middle"
+                *ngIf="(cartCount$ | async) as count">{{ count > 0 ? count : '' }}</span>
+            </a>
+            <!-- Removed Cart Preview Popup from here for simplicity, can be added back if needed -->
+          </li>
+        </ul>
+
+        <!-- Removed the duplicate nav-icons div -->
+
+      </div>
+    </div>
+  </nav>
+</header>

@@ -1,0 +1,70 @@
+<div class="container my-5">
+  <h2 class="mb-4">سلة التسوق</h2>
+
+  <div *ngIf="(cartItems$ | async)?.length; else emptyCart">
+    <div class="table-responsive">
+      <table class="table table-bordered text-center align-middle">
+        <thead class="table-light">
+          <tr>
+            <th>الصورة</th>
+            <th>المنتج</th>
+            <th>الكمية</th>
+            <th>السعر</th>
+            <th>الإجمالي</th>
+            <th>حذف</th>
+          </tr>
+        </thead>
+        <tbody>
+          <ng-container *ngIf="cartItems$ | async as cartItems">
+            <ng-container *ngFor="let item of cartItems">
+              <ng-container *ngIf="item.product">
+                <tr>
+                  <td>
+                    <img [src]="item.product.imageUrl" alt="{{ item.product.name }}" width="60" />
+                  </td>
+                  <td>{{ item.product.name }}</td>
+                  <td>
+                    <input type="number" class="form-control" [value]="item.quantity"
+                      (change)="onQuantityChange(item.product.id, $event.target.value)" min="1" />
+                  </td>
+                  <td>{{ item.product.price | currency:'JOD':'symbol' }}</td>
+                  <td>{{ item.product.price * item.quantity | currency:'JOD':'symbol' }}</td>
+                  <td>
+                    <button class="btn btn-sm btn-danger" (click)="removeItem(item.product.id)">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                        class="bi bi-trash3" viewBox="0 0 16 16">
+                        <path
+                          d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5M11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47M8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5" />
+                      </svg>
+                    </button>
+                  </td>
+                </tr>
+              </ng-container>
+            </ng-container>
+          </ng-container>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Cart Totals and Actions -->
+    <div class="d-flex justify-content-between align-items-center mt-4">
+      <!-- Clear Cart Button -->
+      <button class="btn btn-outline-danger" (click)="clearCart()">تفريغ السلة</button>
+
+      <!-- Cart Total -->
+      <h4>المجموع: {{ cartTotal$ | async | currency:'JOD':'symbol' }}</h4>
+
+      <!-- Proceed to Checkout Button (Added here) -->
+      <button class="btn btn-success btn-lg" routerLink="/checkout">
+        الانتقال إلى الدفع <i class="fas fa-arrow-left ms-2"></i>
+      </button>
+    </div>
+
+  </div>
+
+  <ng-template #emptyCart>
+    <div class="alert alert-info text-center">
+      سلة التسوق فارغة حالياً 🛒
+    </div>
+  </ng-template>
+</div>

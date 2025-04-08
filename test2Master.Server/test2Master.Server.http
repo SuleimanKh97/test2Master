@@ -1,0 +1,6 @@
+@test2Master.Server_HostAddress = http://localhost:5136
+
+GET {{test2Master.Server_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

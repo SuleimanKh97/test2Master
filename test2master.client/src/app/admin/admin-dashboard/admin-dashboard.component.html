@@ -1,0 +1,38 @@
+<!-- admin-dashboard.component.html -->
+<div class="container py-5">
+  <h2 class="mb-4">لوحة تحكم الأدمن</h2>
+
+  <div class="row g-4">
+    <div class="col-md-4">
+      <div class="card text-white bg-primary">
+        <div class="card-body">
+          <h5 class="card-title">عدد المستخدمين</h5>
+          <p class="card-text fs-4"> totalUsers  </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card text-white bg-success">
+        <div class="card-body">
+          <h5 class="card-title">عدد المنتجات</h5>
+          <p class="card-text fs-4"> totalProducts </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card text-white bg-danger">
+        <div class="card-body">
+          <h5 class="card-title">طلبات اليوم</h5>
+          <p class="card-text fs-4"> todayOrders </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="my-4" />
+
+  <button class="btn btn-outline-dark" routerLink="/admin/users">إدارة المستخدمين</button>
+  <button class="btn btn-outline-dark ms-2" routerLink="/admin/products">إدارة المنتجات</button>
+</div>

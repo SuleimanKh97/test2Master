@@ -1,0 +1,73 @@
+<!-- Hero Section -->
+<section class="hero-section">
+  <div class="container">
+    <div class="row align-items-center">
+      <div class="col-lg-6 order-lg-1 order-2">
+        <div class="hero-content">
+          <h1>أول متجر إلكتروني لتجارة المواشي في الأردن</h1>
+          <p>سوق الحلال، متجر إلكتروني متخصص في تجارة المواشي. نوفر لك راحتك وسنقوم بالتوصيل إلى باب منزلك.</p>
+          <a routerLink="/shop" class="btn btn-primary btn-lg">تسوق الآن</a>
+        </div>
+      </div>
+      <div class="col-lg-6 order-lg-2 order-1 mb-4 mb-lg-0">
+        <div class="hero-image">
+          <img src="https://a.storyblok.com/f/214788/3840x2160/53253a31e4/hero_goatr.jpg/m/3840x2160/filters:format(webp):quality(80)" alt="سوق الحلال" class="img-fluid">
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Featured Products Section -->
+<section class="featured-products py-5">
+  <div class="container">
+    <div class="section-title text-center mb-5">
+      <h2>منتجاتنا المميزة</h2>
+    </div>
+
+    <div class="row">
+      <div class="col-lg-4 col-md-6 mb-4" *ngFor="let product of featuredProducts">
+        <div class="product-card">
+          <a [routerLink]="['/product', product.id]">
+            <img [src]="product.imageUrl" [alt]="product.name" class="product-image">
+          </a>
+          <div class="product-info">
+            <h3 class="product-title">
+              <a [routerLink]="['/product', product.id]">{{ product.name }}</a>
+            </h3>
+            <div class="product-price">
+              <span class="original-price">{{ product.originalPrice | currency:'JOD ':'symbol':'1.2-2' }}</span>
+              <span>{{ product.price | currency:'JOD ':'symbol':'1.2-2' }}</span>
+            </div>
+            <div class="mt-3">
+              <a [routerLink]="['/product', product.id]" class="btn btn-primary btn-sm">عرض المنتج</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="text-center mt-4">
+      <a routerLink="/shop" class="btn btn-outline-primary">عرض جميع المنتجات</a>
+    </div>
+  </div>
+</section>
+
+<!-- About Section -->
+<section class="about-section py-5 bg-light">
+  <div class="container">
+    <div class="row align-items-center">
+      <div class="col-lg-6 mb-4 mb-lg-0">
+        <h2>تعرف على سوق الحلال</h2>
+        <p>سوق الحلال هو أول متجر إلكتروني متخصص في تجارة المواشي في الأردن. نهدف إلى توفير تجربة تسوق سهلة وموثوقة للمواشي والمنتجات الحلال.</p>
+        <p>نحن نضمن جودة المنتجات ونقدم خدمة توصيل ممتازة في جميع أنحاء الأردن.</p>
+        <a routerLink="/contact" class="btn btn-primary mt-3">اتصل بنا</a>
+      </div>
+      <div class="col-lg-6">
+        <div class="about-image text-center">
+          <img src="assets/images/products/kharouf-baladi.jpeg" alt="سوق الحلال" class="img-fluid rounded">
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

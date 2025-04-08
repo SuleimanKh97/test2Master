@@ -1,0 +1,45 @@
+<div class="profile-container" dir="rtl">
+  <h2>الملف الشخصي</h2>
+
+  <!-- رسالة التحميل -->
+  <div *ngIf="!userData && !errorMessage" class="loading-message">
+    <p>جاري تحميل بيانات الملف الشخصي...</p>
+  </div>
+
+  <!-- رسالة الخطأ -->
+  <div *ngIf="errorMessage" class="error-message">
+    <p>خطأ: {{ errorMessage }}</p>
+    <!-- <button (click)="loadUserProfile()">إعادة المحاولة</button> -->
+  </div>
+
+  <!-- عرض بيانات المستخدم -->
+  <div *ngIf="userData" class="profile-details">
+    <p>
+      <strong>اسم المستخدم:</strong> {{ userData.username }}
+    </p>
+    <p>
+      <strong>البريد الإلكتروني:</strong> {{ userData.email }}
+    </p>
+    <p>
+      <strong>الدور:</strong> {{ userData.role }}
+    </p>
+    <p>
+      <strong>تاريخ الانضمام:</strong> {{ userData.createdAt | date:'mediumDate' }}
+    </p>
+    <!-- يمكن إضافة حقول أخرى هنا -->
+
+    <!-- زر تعديل الملف الشخصي -->
+    <div class="action-buttons" style="margin-top: 25px;">
+      <button class="btn btn-primary" routerLink="/profile/edit">
+        <i class="fas fa-edit"></i> تعديل الملف الشخصي
+      </button>
+      <!-- زر تغيير كلمة المرور -->
+      <button class="btn btn-secondary ms-2" routerLink="/profile/change-password">
+        <i class="fas fa-key"></i> تغيير كلمة المرور
+      </button>
+      <!-- زر تسجيل الخروج يمكن إضافته هنا أيضاً -->
+      <!-- <button class="btn btn-danger ms-2" (click)="logout()">تسجيل الخروج</button> -->
+    </div>
+  </div>
+
+</div>

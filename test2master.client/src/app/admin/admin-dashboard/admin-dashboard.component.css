@@ -1,0 +1,126 @@
+/* admin-dashboard.component.css */
+
+.dashboard-container {
+    padding: 2rem;
+    background-color: #f4f7f6;
+    min-height: calc(100vh - 100px);
+    /* Adjust based on header/footer height */
+}
+
+.dashboard-container h2 {
+    color: #333;
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 0.5rem;
+    text-align: center;
+    /* Center title */
+}
+
+/* Optional styles for stat cards if uncommented in HTML */
+.stat-card {
+    text-align: center;
+}
+
+.stat-card h5 {
+    color: #555;
+    font-size: 1rem;
+    margin-bottom: 0.25rem;
+}
+
+.stat-card p {
+    color: #0056b3;
+    font-weight: 600;
+}
+
+/* --- */
+
+.dashboard-widgets {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    /* Slightly wider minmax */
+    gap: 1.5rem;
+    margin-top: 2rem;
+}
+
+.widget {
+    background-color: #fff;
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    display: flex;
+    flex-direction: column;
+    /* Ensure button stays at bottom */
+}
+
+.widget:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.widget h3 {
+    margin-top: 0;
+    margin-bottom: 0.75rem;
+    color: #0056b3;
+    font-size: 1.2rem;
+}
+
+.widget p {
+    color: #555;
+    margin-bottom: 1.5rem;
+    /* More space before button */
+    flex-grow: 1;
+    /* Push button to bottom */
+    font-size: 0.95rem;
+}
+
+.widget .btn {
+    display: inline-block;
+    text-decoration: none;
+    padding: 0.6rem 1.2rem;
+    align-self: flex-start;
+    /* Align button to the start (right in RTL) */
+}
+
+/* Specific button colors (examples) */
+.widget .btn-primary {
+    background-color: #0071e3;
+    border-color: #0071e3;
+}
+
+.widget .btn-secondary {
+    background-color: #6c757d;
+    border-color: #6c757d;
+}
+
+.widget .btn-info {
+    background-color: #0dcaf0;
+    border-color: #0dcaf0;
+}
+
+.widget .btn-warning {
+    background-color: #ffc107;
+    border-color: #ffc107;
+    color: #333;
+}
+
+/* Hover states for buttons */
+.widget .btn-primary:hover {
+    background-color: #005bb5;
+    border-color: #005bb5;
+}
+
+.widget .btn-secondary:hover {
+    background-color: #5a6268;
+    border-color: #5a6268;
+}
+
+.widget .btn-info:hover {
+    background-color: #0aa5c4;
+    border-color: #0aa5c4;
+}
+
+.widget .btn-warning:hover {
+    background-color: #e0a800;
+    border-color: #e0a800;
+}

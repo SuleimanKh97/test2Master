@@ -1,38 +1,63 @@
 <!-- admin-dashboard.component.html -->
-<div class="container py-5">
-  <h2 class="mb-4">لوحة تحكم الأدمن</h2>
+<div class="dashboard-container" dir="rtl">
+  <h2>لوحة تحكم المشرف</h2>
 
-  <div class="row g-4">
-    <div class="col-md-4">
-      <div class="card text-white bg-primary">
-        <div class="card-body">
-          <h5 class="card-title">عدد المستخدمين</h5>
-          <p class="card-text fs-4"> totalUsers  </p>
+  <!-- Optional: Display Stats (Data would come from component TS) -->
+  <!-- 
+    <div class="row g-3 mb-4">
+      <div class="col-md-4">
+        <div class="stat-card p-3 bg-light border rounded">
+          <h5>إجمالي المستخدمين</h5>
+          <p class="fs-4 mb-0">{{ totalUsers }}</p>
         </div>
       </div>
-    </div>
-
-    <div class="col-md-4">
-      <div class="card text-white bg-success">
-        <div class="card-body">
-          <h5 class="card-title">عدد المنتجات</h5>
-          <p class="card-text fs-4"> totalProducts </p>
+      <div class="col-md-4">
+        <div class="stat-card p-3 bg-light border rounded">
+          <h5>إجمالي المنتجات</h5>
+          <p class="fs-4 mb-0">{{ totalProducts }}</p>
         </div>
       </div>
-    </div>
-
-    <div class="col-md-4">
-      <div class="card text-white bg-danger">
-        <div class="card-body">
-          <h5 class="card-title">طلبات اليوم</h5>
-          <p class="card-text fs-4"> todayOrders </p>
+      <div class="col-md-4">
+        <div class="stat-card p-3 bg-light border rounded">
+          <h5>إجمالي الطلبات</h5>
+          <p class="fs-4 mb-0">{{ totalOrders }}</p>
         </div>
       </div>
+    </div> 
+    -->
+
+  <p>مرحباً بك في لوحة تحكم المشرف. يمكنك من هنا إدارة جوانب مختلفة من المتجر.</p>
+
+  <div class="dashboard-widgets">
+    <!-- Widget for User Management -->
+    <div class="widget">
+      <h3>إدارة المستخدمين</h3>
+      <p>عرض وتعديل وحذف حسابات المستخدمين (المشترين والبائعين).</p>
+      <a routerLink="/admin/users" class="btn btn-primary">إدارة المستخدمين</a>
     </div>
+
+    <!-- Widget for Product Management -->
+    <div class="widget">
+      <h3>إدارة المنتجات</h3>
+      <p>عرض وتعديل جميع المنتجات في المتجر.</p>
+      <a routerLink="/admin/products" class="btn btn-secondary">إدارة المنتجات</a>
+    </div>
+
+    <!-- Widget for Order Management -->
+    <div class="widget">
+      <h3>إدارة الطلبات</h3>
+      <p>عرض وإدارة جميع الطلبات في النظام.</p>
+      <a routerLink="/admin/orders" class="btn btn-info">إدارة الطلبات</a>
+    </div>
+
+    <!-- Widget for Category Management (Example) -->
+    <div class="widget">
+      <h3>إدارة الفئات</h3>
+      <p>إضافة وتعديل وحذف فئات المنتجات.</p>
+      <a routerLink="/admin/categories" class="btn btn-warning">إدارة الفئات</a>
+    </div>
+
+    <!-- Add more widgets as needed -->
   </div>
 
-  <hr class="my-4" />
-
-  <button class="btn btn-outline-dark" routerLink="/admin/users">إدارة المستخدمين</button>
-  <button class="btn btn-outline-dark ms-2" routerLink="/admin/products">إدارة المنتجات</button>
 </div>

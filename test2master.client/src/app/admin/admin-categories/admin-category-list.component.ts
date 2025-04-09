@@ -3,13 +3,13 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { Observable, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
-import { AdminCategoryService, Category } from '../../Services/admin/admin-category.service';
-import { ReactiveFormsModule, FormsModule } from '@angular/forms'; // Import forms modules
+import { AdminCategoryService, Category, AddCategoryModel } from '../../Services/admin/admin-category.service';
+import { FormsModule } from '@angular/forms'; // Import FormsModule for template-driven form
 
 @Component({
     selector: 'app-admin-category-list',
     standalone: true,
-    imports: [CommonModule, RouterModule, ReactiveFormsModule, FormsModule],
+    imports: [CommonModule, RouterModule, FormsModule], // Use FormsModule for ngModel
     providers: [],
     templateUrl: './admin-category-list.component.html',
     styleUrls: ['./admin-category-list.component.css'] // Shares styles
@@ -22,9 +22,7 @@ export class AdminCategoryListComponent implements OnInit {
 
     // For adding/editing categories inline or via modal (simple inline example)
     showAddForm = false;
-    newCategoryName = '';
-    newCategoryDescription = '';
-    editingCategory: Category | null = null;
+    newCategory: AddCategoryModel = { name: '', description: '' }; // Use AddCategoryModel
 
     constructor(private adminCategoryService: AdminCategoryService) { }
 
@@ -42,62 +40,60 @@ export class AdminCategoryListComponent implements OnInit {
                 return of([]);
             })
         );
-        this.categories$.subscribe(() => this.isLoading = false);
+        this.categories$.subscribe({
+            next: () => this.isLoading = false,
+            error: () => this.isLoading = false
+        });
     }
 
     toggleAddForm(): void {
         this.showAddForm = !this.showAddForm;
-        this.editingCategory = null; // Reset editing state
-        this.newCategoryName = '';
-        this.newCategoryDescription = '';
-    }
-
-    startEditing(category: Category): void {
-        this.editingCategory = { ...category }; // Clone to avoid modifying original object directly
-        this.showAddForm = false; // Hide add form if it was open
-    }
-
-    cancelEditing(): void {
-        this.editingCategory = null;
+        this.newCategory = { name: '', description: '' };
+        this.errorMessage = null;
+        this.successMessage = null;
     }
 
     saveNewCategory(): void {
-        if (!this.newCategoryName) return;
-        const categoryData = { name: this.newCategoryName, description: this.newCategoryDescription };
-        this.adminCategoryService.addCategory(categoryData).subscribe({
-            next: () => {
-                this.successMessage = 'Category added successfully.';
-                this.loadCategories();
-                this.toggleAddForm(); // Hide form
-                setTimeout(() => this.successMessage = null, 3000);
-            },
-            error: (err) => this.errorMessage = err.message || 'Failed to add category.'
-        });
-    }
+        if (!this.newCategory.name) {
+            this.errorMessage = 'اسم الفئة مطلوب.';
+            return;
+        }
 
-    saveEditedCategory(): void {
-        if (!this.editingCategory || !this.editingCategory.name) return;
-        this.adminCategoryService.updateCategory(this.editingCategory.id, this.editingCategory).subscribe({
+        this.isLoading = true;
+        this.errorMessage = null;
+        this.successMessage = null;
+
+        this.adminCategoryService.addCategory(this.newCategory).subscribe({
             next: () => {
-                this.successMessage = 'Category updated successfully.';
+                this.successMessage = 'تمت إضافة الفئة بنجاح.';
                 this.loadCategories();
-                this.editingCategory = null; // Exit editing mode
+                this.toggleAddForm();
                 setTimeout(() => this.successMessage = null, 3000);
             },
-            error: (err) => this.errorMessage = err.message || 'Failed to update category.'
+            error: (err) => {
+                this.errorMessage = err.message || 'فشل في إضافة الفئة.';
+                this.isLoading = false;
+            }
         });
     }
 
     deleteCategory(categoryId: string | number): void {
-        if (!confirm('Are you sure you want to delete this category?')) return;
+        if (!confirm('هل أنت متأكد أنك تريد حذف هذه الفئة؟ قد يؤثر هذا على المنتجات المرتبطة بها.')) return;
+
+        this.isLoading = true;
+        this.errorMessage = null;
+        this.successMessage = null;
 
         this.adminCategoryService.deleteCategory(categoryId).subscribe({
             next: (res) => {
-                this.successMessage = res.message || 'Category deleted successfully.';
-                this.loadCategories(); // Refresh list
+                this.successMessage = res?.message || 'Category deleted successfully.';
+                this.loadCategories();
                 setTimeout(() => this.successMessage = null, 3000);
             },
-            error: (err) => this.errorMessage = err.message || 'Failed to delete category.'
+            error: (err) => {
+                this.errorMessage = err.message || 'فشل في حذف الفئة.';
+                this.isLoading = false;
+            }
         });
     }
 } 

@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { AuthService } from '../../Services/auth/auth.service'; // Verify path
+import { CommonModule } from '@angular/common'; // Import CommonModule
+import { Router, RouterModule } from '@angular/router'; // Import Router and RouterModule
 
 interface UserProfile {
   username: string;
@@ -14,7 +16,12 @@ interface UserProfile {
 }
 @Component({
   selector: 'app-buyer-dashboard',
-  standalone: false,
+  standalone: true,
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    RouterModule
+  ],
   templateUrl: './buyer-dashboard.component.html',
   styleUrl: './buyer-dashboard.component.css'
 })

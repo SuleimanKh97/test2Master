@@ -1,210 +1,106 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable, of, throwError } from 'rxjs'; // Import 'of' and 'throwError' for mock data
-import { catchError, delay, map } from 'rxjs/operators';
+import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http';
+import { Observable, throwError } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 
-// Updated interface to include sellerId
+// Interface matching backend C# Product model (more or less)
 export interface SellerProduct {
-    id?: string | number; // Optional for new products
-    sellerId?: string | number; // Added sellerId (optional for reading, required for adding)
+    id?: number; // Assuming ID is number, optional for add
     name: string;
     description: string;
     price: number;
-    stockQuantity: number;
-    imageUrl?: string; // Optional
-    // Add other relevant product fields: category, status, etc.
+    categoryId: number; // Assuming category ID is required
+    img?: string; // Image URL or path
+    createdAt?: Date | string;
+    sellerId?: number; // Backend might set this automatically based on auth
+    // Remove fields not directly part of Product model like stockQuantity if handled differently
 }
+
+// Interface matching backend CreateProductRequest DTO
+export interface AddProductModel {
+    name: string;
+    description: string;
+    price: number;
+    categoryId: number;
+    img?: string;
+    // sellerId is usually not sent, derived from auth token backend
+}
+
 
 @Injectable({
     providedIn: 'root'
 })
 export class SellerProductService {
 
-    // Adjust the base URL to your actual API endpoint for seller products
-    private apiUrl = '/api/seller/products'; // Example API endpoint
-
-    // In-memory store for mock data
-    private mockProductStore: SellerProduct[] = [
-        { id: 'p1', sellerId: 'seller1', name: 'منتج بائع 1', description: 'وصف المنتج الأول', price: 150, stockQuantity: 20, imageUrl: 'https://via.placeholder.com/150/aaaaaa/ffffff?text=Mock1' },
-        { id: 'p2', sellerId: 'seller1', name: 'منتج بائع 2', description: 'وصف المنتج الثاني', price: 99.99, stockQuantity: 5, imageUrl: 'https://via.placeholder.com/150/bbbbbb/ffffff?text=Mock2' },
-        { id: 'p3', sellerId: 'seller2', name: 'منتج بائع آخر', description: 'وصف من بائع آخر', price: 45, stockQuantity: 10, imageUrl: 'https://via.placeholder.com/150/cccccc/ffffff?text=MockOther' } // Added product from another seller
-    ];
-    private nextId = 4; // Simple ID generation for mock data
+    // Use the full base path for the Seller controller
+    private apiUrl = 'https://localhost:7158/Seller'; // Updated API URL
 
     constructor(private http: HttpClient) { }
 
-    // Helper to get current seller ID from localStorage
-    private getCurrentSellerId(): string | null {
-        // Assuming the user ID is stored as 'userId' after login
-        return localStorage.getItem('userId');
-    }
-
-    // Helper to get authorization headers (assuming token is stored in localStorage)
+    // Re-usable helper for auth headers
     private getAuthHeaders(): HttpHeaders {
-        const token = localStorage.getItem('token'); // Or however you store the auth token
+        const token = localStorage.getItem('token');
+        if (!token) {
+            console.error("SellerProductService: Auth token not found.");
+        }
         return new HttpHeaders({
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
+            ...(token ? { 'Authorization': `Bearer ${token}` } : {})
         });
     }
 
-    /**
-     * Fetches the list of products for the CURRENT seller from the in-memory store.
-     */
+    /** Fetches the list of products for the CURRENT seller from API */
     getSellerProducts(): Observable<SellerProduct[]> {
-        console.log('SellerProductService: Fetching seller products from mock store...');
-        const currentSellerId = this.getCurrentSellerId();
-        if (!currentSellerId) {
-            console.error('Seller ID not found in localStorage for getSellerProducts');
-            return throwError(() => new Error('Seller ID not found. Please log in again.'));
-        }
-        console.log(`Filtering products for seller ID: ${currentSellerId}`);
-
-        // --- MOCK IMPLEMENTATION (using store and filtering by sellerId) ---
-        const sellerProducts = this.mockProductStore.filter(p => p.sellerId == currentSellerId);
-        return of([...sellerProducts]).pipe(delay(500)); // Return a copy
-        // --- END MOCK --- 
-
-        // // --- REAL IMPLEMENTATION (Backend handles filtering) ---
-        // return this.http.get<SellerProduct[]>(this.apiUrl, { headers: this.getAuthHeaders() })
-        //   .pipe(catchError(this.handleError));
-        // // --- END REAL --- 
+        console.log('SellerProductService: Fetching seller products from API...');
+        // REAL IMPLEMENTATION (Backend handles filtering based on auth token)
+        return this.http.get<SellerProduct[]>(`${this.apiUrl}/products`, { headers: this.getAuthHeaders() })
+            .pipe(catchError(this.handleError));
     }
 
-    /**
-     * Fetches details for a specific product ID, ensuring it belongs to the current seller.
-     */
-    getProductById(productId: string | number): Observable<SellerProduct> {
-        console.log(`SellerProductService: Fetching product with ID: ${productId} from mock store...`);
-        const currentSellerId = this.getCurrentSellerId();
-        if (!currentSellerId) {
-            console.error('Seller ID not found in localStorage for getProductById');
-            return throwError(() => new Error('Seller ID not found. Please log in again.'));
-        }
-
-        // --- MOCK IMPLEMENTATION (using store) ---
-        const product = this.mockProductStore.find(p => p.id == productId && p.sellerId == currentSellerId);
-        if (!product) {
-            return throwError(() => ({ status: 404, message: 'Product not found or does not belong to this seller (mock store)' })).pipe(delay(300));
-        }
-        return of({ ...product }).pipe(delay(300)); // Return a copy
-        // --- END MOCK --- 
-
-        // // --- REAL IMPLEMENTATION (Backend handles filtering/authorization) ---
-        // return this.http.get<SellerProduct>(`${this.apiUrl}/${productId}`, { headers: this.getAuthHeaders() })
-        //   .pipe(catchError(this.handleError));
-        // // --- END REAL --- 
+    /** Fetches details for a specific product ID from API */
+    getProductById(productId: number): Observable<SellerProduct> {
+        console.log(`SellerProductService: Fetching product ${productId} from API...`);
+        // REAL IMPLEMENTATION (Backend should authorize if the product belongs to the seller)
+        return this.http.get<SellerProduct>(`${this.apiUrl}/products/${productId}`, { headers: this.getAuthHeaders() })
+            .pipe(catchError(this.handleError));
     }
 
-    /**
-     * Adds a new product to the in-memory store, associating it with the current seller.
-     */
-    addProduct(productData: SellerProduct): Observable<SellerProduct> {
-        console.log('SellerProductService: Adding new product to mock store...', productData);
-        const currentSellerId = this.getCurrentSellerId();
-        if (!currentSellerId) {
-            console.error('Seller ID not found in localStorage for addProduct');
-            return throwError(() => new Error('Seller ID not found. Cannot add product.'));
-        }
-
-        // --- MOCK IMPLEMENTATION (using store) ---
-        if (!productData.name || productData.price <= 0) {
-            return throwError(() => ({ status: 400, message: 'بيانات المنتج غير صالحة (محاكاة)' })).pipe(delay(500));
-        }
-        const newProduct: SellerProduct = {
-            ...productData,
-            sellerId: currentSellerId, // Assign current seller ID
-            id: `p${this.nextId++}`
-        };
-        this.mockProductStore.push(newProduct);
-        console.log('Current mock store:', this.mockProductStore);
-        return of(newProduct).pipe(delay(800));
-        // --- END MOCK --- 
-
-        // // --- REAL IMPLEMENTATION ---
-        // // Backend associates the product with the seller based on the auth token
-        // return this.http.post<SellerProduct>(this.apiUrl, productData, { headers: this.getAuthHeaders() })
-        //   .pipe(catchError(this.handleError));
-        // // --- END REAL --- 
+    /** Adds a new product via API */
+    addProduct(productData: AddProductModel): Observable<any> { // Expect AddProductModel
+        console.log('SellerProductService: Adding new product via API...', productData);
+        // REAL IMPLEMENTATION (Backend associates the product with the seller based on the auth token)
+        return this.http.post<any>(`${this.apiUrl}/products`, productData, { headers: this.getAuthHeaders() })
+            .pipe(catchError(this.handleError));
     }
 
-    /**
-     * Updates an existing product in the in-memory store, checking seller ownership.
-     */
-    updateProduct(productId: string | number, productData: SellerProduct): Observable<SellerProduct> {
-        console.log(`SellerProductService: Updating product ${productId} in mock store...`, productData);
-        const currentSellerId = this.getCurrentSellerId();
-        if (!currentSellerId) {
-            console.error('Seller ID not found in localStorage for updateProduct');
-            return throwError(() => new Error('Seller ID not found. Cannot update product.'));
-        }
-
-        // --- MOCK IMPLEMENTATION (using store) ---
-        const productIndex = this.mockProductStore.findIndex(p => p.id == productId && p.sellerId == currentSellerId);
-        if (productIndex === -1) {
-            return throwError(() => ({ status: 404, message: 'Product not found or does not belong to this seller (mock store)' })).pipe(delay(500));
-        }
-        if (!productData.name || productData.price <= 0) {
-            return throwError(() => ({ status: 400, message: 'بيانات المنتج غير صالحة (محاكاة)' })).pipe(delay(500));
-        }
-        // Ensure sellerId isn't overwritten if not included in productData
-        const updatedProduct: SellerProduct = { ...productData, id: productId, sellerId: currentSellerId };
-        this.mockProductStore[productIndex] = updatedProduct;
-        console.log('Current mock store:', this.mockProductStore);
-        return of(updatedProduct).pipe(delay(600));
-        // --- END MOCK --- 
-
-        // // --- REAL IMPLEMENTATION (Backend handles authorization) ---
-        // return this.http.put<SellerProduct>(`${this.apiUrl}/${productId}`, productData, { headers: this.getAuthHeaders() })
-        //   .pipe(catchError(this.handleError));
-        // // --- END REAL --- 
+    /** Updates an existing product via API */
+    updateProduct(productId: number, productData: AddProductModel): Observable<any> { // Expect AddProductModel for update too
+        console.log(`SellerProductService: Updating product ${productId} via API...`, productData);
+        // REAL IMPLEMENTATION (Backend handles authorization)
+        return this.http.put<any>(`${this.apiUrl}/products/${productId}`, productData, { headers: this.getAuthHeaders() })
+            .pipe(catchError(this.handleError));
     }
 
-    /**
-     * Deletes a product from the in-memory store, checking seller ownership.
-     */
-    deleteProduct(productId: string | number): Observable<{ message: string }> {
-        console.log(`SellerProductService: Deleting product ${productId} from mock store...`);
-        const currentSellerId = this.getCurrentSellerId();
-        if (!currentSellerId) {
-            console.error('Seller ID not found in localStorage for deleteProduct');
-            return throwError(() => new Error('Seller ID not found. Cannot delete product.'));
-        }
-
-        // --- MOCK IMPLEMENTATION (using store) ---
-        const initialLength = this.mockProductStore.length;
-        const productToDelete = this.mockProductStore.find(p => p.id == productId && p.sellerId == currentSellerId);
-
-        if (!productToDelete) {
-            return throwError(() => ({ status: 404, message: 'Product not found or does not belong to this seller (mock store)' })).pipe(delay(400));
-        }
-
-        this.mockProductStore = this.mockProductStore.filter(p => p.id != productId);
-        console.log('Current mock store:', this.mockProductStore);
-        return of({ message: 'تم حذف المنتج بنجاح (محاكاة)' }).pipe(delay(500));
-        // --- END MOCK --- 
-
-        // // --- REAL IMPLEMENTATION (Backend handles authorization) ---
-        // return this.http.delete<{ message: string }>(`${this.apiUrl}/${productId}`, { headers: this.getAuthHeaders() })
-        //   .pipe(catchError(this.handleError));
-        // // --- END REAL --- 
+    /** Deletes a product via API */
+    deleteProduct(productId: number): Observable<any> { // Return type might be any or specific {message: string}
+        console.log(`SellerProductService: Deleting product ${productId} via API...`);
+        // REAL IMPLEMENTATION (Backend handles authorization)
+        return this.http.delete<any>(`${this.apiUrl}/products/${productId}`, { headers: this.getAuthHeaders() })
+            .pipe(catchError(this.handleError));
     }
 
-    // Basic error handling (can be expanded)
-    private handleError(error: any): Observable<never> {
-        console.error('API Error:', error);
+    // Re-usable, improved error handling
+    private handleError(error: HttpErrorResponse): Observable<never> {
         let errorMessage = 'An unknown error occurred!';
         if (error.error instanceof ErrorEvent) {
-            // Client-side error
-            errorMessage = `Error: ${error.error.message}`;
+            errorMessage = `Network error: ${error.error.message}`;
         } else {
-            // Server-side error
-            errorMessage = `Error Code: ${error.status}\nMessage: ${error.message}`;
-            if (error.error && typeof error.error === 'object' && error.error.message) {
-                errorMessage = error.error.message; // Use specific message from backend if available
-            }
+            console.error(
+                `Backend returned code ${error.status}, ` +
+                `body was: ${JSON.stringify(error.error)}`);
+            errorMessage = error.error?.message || `Server error (status ${error.status})`;
         }
-        // You might want to use a logging service here
+        console.error('Seller API Error:', errorMessage);
         return throwError(() => new Error(errorMessage));
     }
 } 

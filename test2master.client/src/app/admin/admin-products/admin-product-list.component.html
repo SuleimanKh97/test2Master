@@ -43,10 +43,13 @@
                     <td>{{ product.price | currency:'JOD' }}</td>
                     <td>{{ product.stockQuantity }}</td>
                     <td>
+                        <!-- Edit button removed as admin cannot edit products currently -->
+                        <!--
                         <button class="btn btn-sm btn-outline-secondary me-2" (click)="editProduct(product.id)"
                             title="تعديل المنتج">
                             <i class="fas fa-edit"></i>
                         </button>
+                        -->
                         <button class="btn btn-sm btn-outline-danger" (click)="deleteProduct(product.id)"
                             title="حذف المنتج">
                             <i class="fas fa-trash"></i>

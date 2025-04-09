@@ -1,27 +1,51 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { CommonModule, CurrencyPipe } from '@angular/common';
+import { RouterModule } from '@angular/router';
+import { SellerDashboardService, SellerDashboardStats } from '../../Services/seller/seller-dashboard.service';
+import { Observable, of } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 
 @Component({
   selector: 'app-seller-dashboard',
-  standalone: false,
+  standalone: true,
+  imports: [CommonModule, RouterModule, CurrencyPipe],
   templateUrl: './seller-dashboard.component.html',
   styleUrl: './seller-dashboard.component.css'
 })
-export class SellerDashboardComponent {
-  constructor() { }
+export class SellerDashboardComponent implements OnInit {
+
+  dashboardStats$: Observable<SellerDashboardStats | null> = of(null);
+  isLoading = true;
+  errorMessage: string | null = null;
+
+  constructor(private sellerDashboardService: SellerDashboardService) { }
 
   ngOnInit(): void {
-    // Load seller's products and stats
+    this.loadDashboardStats();
   }
 
-  addProduct(): void {
-    console.log('إضافة منتج جديد');
-  }
+  loadDashboardStats(): void {
+    this.isLoading = true;
+    this.errorMessage = null;
+    this.dashboardStats$ = this.sellerDashboardService.getDashboardStats().pipe(
+      catchError(err => {
+        console.error('Error loading seller dashboard stats:', err);
+        this.errorMessage = err.message || 'Failed to load dashboard statistics.';
+        this.isLoading = false;
+        return of(null);
+      })
+    );
 
-  editProduct(productId: number): void {
-    console.log('تعديل المنتج رقم', productId);
-  }
+    this.dashboardStats$.subscribe({
+      next: (stats) => {
+        if (stats) {
+          this.isLoading = false;
+        }
+      },
+      error: () => {
+        this.isLoading = false;
+      }
+    });
 
-  deleteProduct(productId: number): void {
-    console.log('حذف المنتج رقم', productId);
   }
 }

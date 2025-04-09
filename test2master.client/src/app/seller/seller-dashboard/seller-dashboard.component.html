@@ -1,46 +1,75 @@
 <!-- seller-dashboard.component.html -->
-<div class="container py-5">
+<div class="container py-5 seller-dashboard" dir="rtl">
   <h2 class="mb-4">لوحة تحكم البائع</h2>
 
-  <div class="mb-3">
-    <button class="btn btn-primary" routerLink="/seller/products/add">
-      إضافة منتج جديد
-    </button>
+  <!-- Loading Indicator -->
+  <div *ngIf="isLoading" class="d-flex justify-content-center my-5">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">جارٍ التحميل...</span>
+    </div>
   </div>
 
-  <div class="table-responsive">
-    <table class="table table-striped">
-      <thead class="table-dark">
-        <tr>
-          <th>المنتج</th>
-          <th>السعر</th>
-          <th>الحالة</th>
-          <th>إجراءات</th>
-        </tr>
-      </thead>
-      <tbody>
-        <!--<tr *ngFor="let product of sellerProducts">-->
-        <tr>
-
-          <td> product.name </td>
-          <td> product.price | currency:'JOD':'symbol' </td>
-          <td>
-            <!--<span [ngClass]="product.inStock ? 'text-success' : 'text-danger'">-->
-            <span>
-
-              product.inStock ? 'متوفر' : 'غير متوفر'
-            </span>
-          </td>
-          <td>
-            <button class="btn btn-sm btn-warning"></button>
-            <!--<button class="btn btn-sm btn-warning" (click)="editProduct(product.id)">تعديل</button>-->
-
-            <button class="btn btn-sm btn-danger">حذف</button>
-            <!--<button class="btn btn-sm btn-danger" (click)="deleteProduct(product.id)">حذف</button>-->
-
-          </td>
-        </tr>
-      </tbody>
-    </table>
+  <!-- Error Message -->
+  <div *ngIf="errorMessage" class="alert alert-danger">
+    <i class="fas fa-exclamation-triangle me-2"></i> {{ errorMessage }}
   </div>
+
+  <!-- Dashboard Stats -->
+  <div *ngIf="!isLoading && !errorMessage">
+    <div *ngIf="dashboardStats$ | async as stats; else noStats">
+      <div class="row">
+        <!-- Total Products Card -->
+        <div class="col-md-4 mb-4">
+          <div class="card text-center h-100 shadow-sm">
+            <div class="card-body">
+              <div class="stat-icon text-primary mb-3"><i class="fas fa-box-open fa-3x"></i></div>
+              <h5 class="card-title">إجمالي المنتجات</h5>
+              <p class="card-text display-4 fw-bold">{{ stats.totalProducts }}</p>
+            </div>
+            <div class="card-footer bg-light">
+              <a routerLink="/seller/products" class="btn btn-sm btn-outline-primary">إدارة المنتجات</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Total Orders Card -->
+        <div class="col-md-4 mb-4">
+          <div class="card text-center h-100 shadow-sm">
+            <div class="card-body">
+              <div class="stat-icon text-warning mb-3"><i class="fas fa-receipt fa-3x"></i></div>
+              <h5 class="card-title">إجمالي الطلبات</h5>
+              <p class="card-text display-4 fw-bold">{{ stats.totalOrders }}</p>
+              <!-- Add note about potential calculation inaccuracy if needed -->
+            </div>
+            <div class="card-footer bg-light">
+              <a routerLink="/seller/orders" class="btn btn-sm btn-outline-warning">إدارة الطلبات</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Total Revenue Card -->
+        <div class="col-md-4 mb-4">
+          <div class="card text-center h-100 shadow-sm">
+            <div class="card-body">
+              <div class="stat-icon text-success mb-3"><i class="fas fa-coins fa-3x"></i></div>
+              <h5 class="card-title">إجمالي الإيرادات</h5>
+              <p class="card-text display-4 fw-bold">{{ stats.totalRevenue | currency:'JOD':'symbol' }}</p>
+              <!-- Add note about potential calculation inaccuracy if needed -->
+            </div>
+            <div class="card-footer bg-light">
+              <span class="text-muted">بيانات تقديرية</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <ng-template #noStats>
+      <div *ngIf="!isLoading" class="alert alert-info">
+        لا توجد بيانات لعرضها في لوحة التحكم.
+      </div>
+    </ng-template>
+  </div>
+
+  <!-- Removed product table - should be on a separate product management page -->
+
 </div>

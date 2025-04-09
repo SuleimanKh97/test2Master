@@ -1,18 +1,22 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../Services/auth/auth.service';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-
-
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-register',
-  standalone: false,
+  standalone: true,
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    RouterModule
+  ],
   templateUrl: './register.component.html',
   styleUrl: './register.component.css'
 })
 export class RegisterComponent implements OnInit {
-  
+
 
   signupForm!: FormGroup;
   submitted = false;
@@ -20,7 +24,7 @@ export class RegisterComponent implements OnInit {
   errorMessage = '';
 
 
- constructor(private fb: FormBuilder, private authService: AuthService, private router: Router) { }
+  constructor(private fb: FormBuilder, private authService: AuthService, private router: Router) { }
 
 
   ngOnInit(): void {

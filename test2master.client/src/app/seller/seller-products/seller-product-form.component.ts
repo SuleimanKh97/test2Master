@@ -2,8 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms'; // Import ReactiveFormsModule
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { SellerProductService, SellerProduct } from '../../Services/seller/seller-product.service';
-import { catchError, finalize, of } from 'rxjs';
+import { SellerProductService, SellerProduct, AddProductModel } from '../../Services/seller/seller-product.service';
+import { AdminCategoryService, Category } from '../../Services/admin/admin-category.service';
+import { catchError, finalize, of, Observable, forkJoin } from 'rxjs';
 
 @Component({
     selector: 'app-seller-product-form',
@@ -24,23 +25,64 @@ export class SellerProductFormComponent implements OnInit {
     submitted = false;
     errorMessage: string | null = null;
     pageTitle = 'إضافة منتج جديد'; // Default title
+    availableCategories$: Observable<Category[]> = of([]); // Observable for categories
 
     constructor(
         private fb: FormBuilder,
         private sellerProductService: SellerProductService,
+        private adminCategoryService: AdminCategoryService, // Inject Category service
         private route: ActivatedRoute,
         private router: Router
     ) { }
 
     ngOnInit(): void {
         this.productId = this.route.snapshot.paramMap.get('id');
-        this.isEditMode = !!this.productId; // Set edit mode if ID exists
+        this.isEditMode = !!this.productId;
 
         this.initForm();
+        this.loadInitialData(); // Load categories and potentially product data
+    }
 
-        if (this.isEditMode) {
+    loadInitialData(): void {
+        this.isLoading = true;
+        this.errorMessage = null;
+
+        const categoryRequest = this.adminCategoryService.getCategories().pipe(
+            catchError(err => {
+                console.error('Error loading categories:', err);
+                this.errorMessage = 'فشل تحميل قائمة الفئات.';
+                return of([]); // Return empty array on category load error
+            })
+        );
+
+        this.availableCategories$ = categoryRequest; // Assign observable for the template
+
+        if (this.isEditMode && this.productId) {
             this.pageTitle = 'تعديل المنتج';
-            this.loadProductData();
+            const productRequest = this.sellerProductService.getProductById(Number(this.productId)).pipe(
+                catchError(err => {
+                    console.error('Error loading product data:', err);
+                    // Append to existing error message or set a new one
+                    this.errorMessage = (this.errorMessage ? this.errorMessage + ' ' : '') + 'فشل تحميل بيانات المنتج.';
+                    return of(null); // Return null on product load error
+                })
+            );
+
+            // Use forkJoin to wait for both requests if in edit mode
+            forkJoin({ categories: categoryRequest, product: productRequest })
+                .pipe(finalize(() => this.isLoading = false))
+                .subscribe(({ product }) => {
+                    if (product) {
+                        this.productForm.patchValue(product);
+                    }
+                    // Categories are handled by availableCategories$
+                });
+        } else {
+            // Only need categories in add mode
+            this.pageTitle = 'إضافة منتج جديد';
+            categoryRequest
+                .pipe(finalize(() => this.isLoading = false))
+                .subscribe(); // Subscribe to trigger the request
         }
     }
 
@@ -50,28 +92,9 @@ export class SellerProductFormComponent implements OnInit {
             name: ['', Validators.required],
             description: ['', Validators.required],
             price: [null, [Validators.required, Validators.min(0.01)]], // Price must be positive
-            stockQuantity: [null, [Validators.required, Validators.min(0)]], // Stock cannot be negative
+            categoryId: [null, Validators.required], // Add categoryId field
             imageUrl: [''] // Optional
             // Add other fields like category here if needed
-        });
-    }
-
-    // Load product data for editing
-    loadProductData(): void {
-        if (!this.productId) return;
-        this.isLoading = true;
-        this.sellerProductService.getProductById(this.productId).pipe(
-            catchError(err => {
-                console.error('Error loading product data:', err);
-                this.errorMessage = 'حدث خطأ أثناء تحميل بيانات المنتج.';
-                this.isLoading = false;
-                return of(null); // Return null or empty object on error
-            }),
-            finalize(() => this.isLoading = false)
-        ).subscribe(product => {
-            if (product) {
-                this.productForm.patchValue(product);
-            }
         });
     }
 
@@ -87,10 +110,16 @@ export class SellerProductFormComponent implements OnInit {
         }
 
         this.isLoading = true;
-        const productData: SellerProduct = this.productForm.value;
+        const productData: AddProductModel = {
+            name: this.f['name'].value,
+            description: this.f['description'].value,
+            price: this.f['price'].value,
+            categoryId: this.f['categoryId'].value, // Now this exists
+            img: this.f['imageUrl']?.value || '' // Handle potentially missing imageUrl
+        };
 
-        const saveOperation = this.isEditMode
-            ? this.sellerProductService.updateProduct(this.productId!, productData)
+        const saveOperation: Observable<any> = this.isEditMode
+            ? this.sellerProductService.updateProduct(Number(this.productId!), productData)
             : this.sellerProductService.addProduct(productData);
 
         saveOperation.pipe(

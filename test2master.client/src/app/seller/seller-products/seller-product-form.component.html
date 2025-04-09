@@ -48,14 +48,18 @@
             </div>
         </div>
 
-        <!-- Stock Quantity -->
+        <!-- Category Selection -->
         <div class="mb-3">
-            <label for="stockQuantity" class="form-label">الكمية المتاحة</label>
-            <input type="number" id="stockQuantity" class="form-control" formControlName="stockQuantity"
-                [ngClass]="{ 'is-invalid': submitted && f['stockQuantity'].errors }" step="1">
-            <div *ngIf="submitted && f['stockQuantity'].errors" class="invalid-feedback">
-                <div *ngIf="f['stockQuantity'].errors['required']">الكمية المتاحة مطلوبة.</div>
-                <div *ngIf="f['stockQuantity'].errors['min']">لا يمكن أن تكون الكمية سالبة.</div>
+            <label for="productCategory" class="form-label">الفئة</label>
+            <select id="productCategory" class="form-select" formControlName="categoryId"
+                [ngClass]="{ 'is-invalid': submitted && f['categoryId'].errors }">
+                <option [ngValue]="null" disabled>-- اختر فئة --</option>
+                <option *ngFor="let category of (availableCategories$ | async)" [value]="category.id">
+                    {{ category.name }}
+                </option>
+            </select>
+            <div *ngIf="submitted && f['categoryId'].errors" class="invalid-feedback">
+                <div *ngIf="f['categoryId'].errors['required']">الفئة مطلوبة.</div>
             </div>
         </div>
 
@@ -65,8 +69,6 @@
             <input type="url" id="imageUrl" class="form-control" formControlName="imageUrl">
             <!-- Basic URL validation is handled by type="url", add pattern validator if stricter format needed -->
         </div>
-
-        <!-- Add other fields like Category dropdown here -->
 
         <!-- Form Actions -->
         <div class="d-flex justify-content-end gap-2 mt-4">

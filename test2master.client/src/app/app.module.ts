@@ -16,7 +16,6 @@ import { LoginComponent } from './auth/login/login.component';
 import { RegisterComponent } from './auth/register/register.component';
 import { ProfileComponent } from './user/profile/profile.component';
 import { AdminDashboardComponent } from './admin/admin-dashboard/admin-dashboard.component';
-import { SellerDashboardComponent } from './seller/seller-dashboard/seller-dashboard.component';
 import { BuyerDashboardComponent } from './buyer/buyer-dashboard/buyer-dashboard.component';
 import { TokenInterceptor } from './interceptors/token.interceptor';
 import { EditProfileComponent } from './user/edit-profile/edit-profile.component';
@@ -27,29 +26,18 @@ import { CheckoutComponent } from './checkout/checkout.component';
 
 @NgModule({
   declarations: [
-    AppComponent,
     HomeComponent,
-    HeaderComponent,
-    FooterComponent,
     ProductListComponent,
     ProductDetailsComponent,
     ContactComponent,
     CartComponent,
     LoginComponent,
-    RegisterComponent,
     ProfileComponent,
     AdminDashboardComponent,
-    SellerDashboardComponent,
-    BuyerDashboardComponent,
   ],
   imports: [
     BrowserModule, HttpClientModule,
     AppRoutingModule, FormsModule, ReactiveFormsModule,
-    EditProfileComponent,
-    ChangePasswordComponent,
-    OrderHistoryComponent,
-    CheckoutComponent,
-    
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: TokenInterceptor, multi: true }

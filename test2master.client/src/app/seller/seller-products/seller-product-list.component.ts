@@ -75,7 +75,8 @@ export class SellerProductListComponent implements OnInit {
         this.errorMessage = null;
         this.successMessage = null;
 
-        this.sellerProductService.deleteProduct(productId).subscribe({
+        // Convert productId to number before calling the service
+        this.sellerProductService.deleteProduct(Number(productId)).subscribe({
             next: (response) => {
                 console.log('Product deleted successfully', response);
                 this.successMessage = response.message || 'تم حذف المنتج بنجاح.';

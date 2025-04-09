@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http';
 import { Observable, of, throwError } from 'rxjs';
 import { catchError, delay, tap } from 'rxjs/operators';
 
@@ -8,9 +8,24 @@ export interface AdminUser {
     id: string | number;
     username: string;
     email: string;
-    role: 'Buyer' | 'Seller' | 'Admin';
+    role: 'Buyer' | 'Seller' | 'Admin' | string; // Allow string for flexibility from backend
     createdAt: Date | string;
     // Add other relevant fields: isActive, orderCount, etc.
+}
+
+// Model for adding a user (matches backend RegisterModel, maybe without Role if backend defaults)
+export interface AddUserModel {
+    username: string;
+    email: string;
+    password?: string; // Password is required on add
+    role: string; // Role is required on add
+}
+
+// Model for updating a user (matches backend UpdateUserModel)
+export interface UpdateUserModel {
+    username: string;
+    email: string;
+    role: string;
 }
 
 @Injectable({
@@ -18,98 +33,99 @@ export interface AdminUser {
 })
 export class AdminUserService {
 
-    private apiUrl = '/api/admin/users'; // Example API endpoint
-    // Mock data store
-    private mockUsers: AdminUser[] = [
-        { id: 'u1', username: 'buyer1', email: 'buyer1@test.com', role: 'Buyer', createdAt: new Date(Date.now() - 86400000 * 3) },
-        { id: 'u2', username: 'seller', email: 'seller@test.com', role: 'Seller', createdAt: new Date(Date.now() - 86400000 * 2) },
-        { id: 'u3', username: 'buyer2', email: 'buyer2@test.com', role: 'Buyer', createdAt: new Date(Date.now() - 86400000 * 1) },
-        { id: 'u4', username: 'admin', email: 'admin@test.com', role: 'Admin', createdAt: new Date() },
-    ];
-
+    // Use the full base path for the admin controller based on user input
+    // WARNING: Hardcoding the full URL is not recommended for production.
+    // Consider using environment variables or a proxy configuration.
+    private apiUrl = 'https://localhost:7158/Admin'; // Updated API URL
 
     constructor(private http: HttpClient) { }
 
     private getAuthHeaders(): HttpHeaders {
         const token = localStorage.getItem('token');
+        // Ensure token exists, otherwise API calls might fail silently or with 401
+        if (!token) {
+            console.error("AdminUserService: Auth token not found in localStorage.");
+            // Optionally, redirect to login or handle appropriately
+        }
         return new HttpHeaders({
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
+            // Conditionally add Authorization header only if token exists
+            ...(token ? { 'Authorization': `Bearer ${token}` } : {})
         });
     }
 
     /** Fetches all users */
     getUsers(): Observable<AdminUser[]> {
-        console.log('AdminUserService: Fetching all users (mock)...');
-        // --- MOCK IMPLEMENTATION ---
-        // Return a copy to prevent direct modification of the mock store
-        return of([...this.mockUsers]).pipe(delay(500)); // Simulate network delay
-        // --- END MOCK ---
-        // // REAL: return this.http.get<AdminUser[]>(this.apiUrl, { headers: this.getAuthHeaders() }).pipe(catchError(this.handleError));
+        console.log('AdminUserService: Fetching all users from API...');
+        // REAL IMPLEMENTATION
+        return this.http.get<AdminUser[]>(`${this.apiUrl}/users`, { headers: this.getAuthHeaders() })
+            .pipe(catchError(this.handleError));
     }
 
     /** Updates a user's details */
-    updateUser(userId: string | number, userData: Partial<AdminUser>): Observable<any> {
-        console.log(`AdminUserService: Updating user ${userId} (mock)...`, userData);
-        // --- MOCK IMPLEMENTATION ---
-        const userIndex = this.mockUsers.findIndex(u => u.id === userId);
-        if (userIndex > -1) {
-            // Update the user in the mock store
-            this.mockUsers[userIndex] = { ...this.mockUsers[userIndex], ...userData };
-            console.log('Mock store updated:', this.mockUsers);
-            // Simulate success or failure randomly
-            if (Math.random() < 0.1) { // 10% chance of failure
-                console.error(`Mock Failure: Could not update user ${userId}`);
-                return throwError(() => ({ status: 500, message: 'Failed to update user (mock)' })).pipe(delay(600));
-            }
-            return of({ message: 'User updated successfully (mock)' }).pipe(delay(600));
-        } else {
-            console.error(`Mock Error: User ${userId} not found.`);
-            return throwError(() => ({ status: 404, message: 'User not found (mock)' })).pipe(delay(600));
-        }
-        // --- END MOCK ---
-        // // REAL: return this.http.put(`${this.apiUrl}/${userId}`, userData, { headers: this.getAuthHeaders() }).pipe(catchError(this.handleError));
+    updateUser(userId: string | number, userData: UpdateUserModel): Observable<any> {
+        console.log(`AdminUserService: Updating user ${userId} via API...`, userData);
+        // REAL IMPLEMENTATION
+        return this.http.put(`${this.apiUrl}/users/${userId}`, userData, { headers: this.getAuthHeaders() })
+            .pipe(catchError(this.handleError));
     }
 
+    /** Adds a new user */
+    // Ensure userData matches the expected structure from the backend (RegisterModel)
+    addUser(userData: AddUserModel): Observable<any> {
+        console.log('AdminUserService: Adding new user via API...', userData);
+        // REAL IMPLEMENTATION
+        return this.http.post(`${this.apiUrl}/users`, userData, { headers: this.getAuthHeaders() })
+            .pipe(catchError(this.handleError));
+    }
 
     /** Updates a user's role */
-    updateUserRole(userId: string | number, newRole: 'Buyer' | 'Seller' | 'Admin'): Observable<any> {
-        console.log(`AdminUserService: Updating role for user ${userId} to ${newRole} (mock)...`);
-        // --- MOCK IMPLEMENTATION ---
-        // Delegate to the main updateUser method for mock consistency
-        return this.updateUser(userId, { role: newRole });
-        // --- END MOCK ---
-        // // REAL: return this.http.put(`${this.apiUrl}/${userId}/role`, { role: newRole }, { headers: this.getAuthHeaders() }).pipe(catchError(this.handleError));
+    // Note: Consider if this specific endpoint is still needed if general update works
+    // Or adjust this to use the ban/unban endpoint if that's the intention
+    updateUserRole(userId: string | number, newRole: 'Buyer' | 'Seller' | 'Admin' | string): Observable<any> {
+        console.log(`AdminUserService: Updating role for user ${userId} to ${newRole} via API...`);
+        // Option 1: Use the general update endpoint
+        // You might need to fetch the user first to get other details if PUT requires the full model
+        // This implementation assumes PUT /users/{id} can handle partial updates or you send the whole object
+        const updateData: UpdateUserModel = { role: newRole, username: '', email: '' }; // Placeholder - needs real data
+        // !!! This is problematic as we don't have the current username/email here!
+        // !!! It's better to use the main updateUser method from the component which has the full user object
+        console.warn('updateUserRole should ideally use the full updateUser method with complete data.');
+        // Temporary fallback - might fail if backend expects full model
+        // return this.updateUser(userId, updateData);
+
+        // Option 2: If there was a specific role update endpoint (like the ban one)
+        // return this.http.put(`${this.apiUrl}/users/${userId}/role`, { role: newRole }, { headers: this.getAuthHeaders() }).pipe(catchError(this.handleError));
+
+        // Option 3: Remove this method if `updateUser` from component handles role changes
+        return throwError(() => new Error('updateUserRole method is deprecated. Use standard updateUser.'));
     }
 
     /** Deletes a user */
     deleteUser(userId: string | number): Observable<any> {
-        console.log(`AdminUserService: Deleting user ${userId} (mock)...`);
-        // --- MOCK IMPLEMENTATION ---
-        const userIndex = this.mockUsers.findIndex(u => u.id === userId);
-        if (userIndex > -1) {
-            this.mockUsers.splice(userIndex, 1); // Remove from mock store
-            console.log('Mock store updated:', this.mockUsers);
-            // Simulate success or failure randomly
-            if (Math.random() < 0.05) { // 5% chance of failure
-                console.error(`Mock Failure: Could not delete user ${userId}`);
-                // Re-add user if deletion fails simulation? Depends on desired mock behavior.
-                return throwError(() => ({ status: 500, message: 'Failed to delete user (mock)' })).pipe(delay(500));
-            }
-            return of({ message: 'User deleted successfully (mock)' }).pipe(delay(700));
-        } else {
-            console.error(`Mock Error: User ${userId} not found for deletion.`);
-            return throwError(() => ({ status: 404, message: 'User not found for deletion (mock)' })).pipe(delay(500));
-        }
-        // --- END MOCK ---
-        // // REAL: return this.http.delete(`${this.apiUrl}/${userId}`, { headers: this.getAuthHeaders() }).pipe(catchError(this.handleError));
+        console.log(`AdminUserService: Deleting user ${userId} via API...`);
+        // REAL IMPLEMENTATION
+        return this.http.delete(`${this.apiUrl}/users/${userId}`, { headers: this.getAuthHeaders() })
+            .pipe(catchError(this.handleError));
     }
 
-    // Basic error handling
-    private handleError(error: any): Observable<never> {
-        console.error('API Error:', error);
-        // Try to get message from backend error response, fallback to generic message
-        let errorMessage = error.error?.message || error.message || 'An unknown error occurred!';
+    // Basic error handling - improved
+    private handleError(error: HttpErrorResponse): Observable<never> {
+        let errorMessage = 'An unknown error occurred!';
+        if (error.error instanceof ErrorEvent) {
+            // Client-side or network error
+            errorMessage = `Network error: ${error.error.message}`;
+        } else {
+            // Backend returned an unsuccessful response code.
+            // The response body may contain clues as to what went wrong.
+            console.error(
+                `Backend returned code ${error.status}, ` +
+                `body was: ${JSON.stringify(error.error)}`);
+            // Try to get message from backend error response
+            errorMessage = error.error?.message || error.message || `Server error (status ${error.status})`;
+        }
+        console.error('API Error:', errorMessage);
+        // Return an observable with a user-facing error message
         return throwError(() => new Error(errorMessage));
     }
 } 

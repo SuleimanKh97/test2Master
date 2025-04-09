@@ -13,31 +13,29 @@
     <div *ngIf="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
     <div *ngIf="successMessage" class="alert alert-success">{{ successMessage }}</div>
 
-    <!-- Add Category Button/Form Toggle -->
-    <div class="text-end mb-3">
-        <button class="btn btn-primary btn-sm" (click)="toggleAddForm()">
-            <i class="fas {{ showAddForm ? 'fa-times' : 'fa-plus' }}"></i> {{ showAddForm ? 'إلغاء' : 'إضافة فئة جديدة'
-            }}
+    <!-- Add Category Button -->
+    <div class="mb-3 text-end">
+        <button class="btn btn-primary" (click)="toggleAddForm()">
+            <i class="fas fa-plus me-1"></i> {{ showAddForm ? 'إلغاء الإضافة' : 'إضافة فئة جديدة' }}
         </button>
     </div>
 
-    <!-- Add Category Form (Inline) -->
-    <div *ngIf="showAddForm" class="add-category-form card p-3 mb-3">
-        <h5>إضافة فئة جديدة</h5>
-        <div class="mb-2">
-            <label for="newCatName" class="form-label">الاسم:</label>
-            <input type="text" id="newCatName" class="form-control form-control-sm" [(ngModel)]="newCategoryName"
-                required>
+    <!-- Add Category Form (Using Template-Driven Forms with ngModel) -->
+    <div *ngIf="showAddForm" class="add-category-form card card-body mb-4">
+        <h4 class="mb-3">إضافة فئة جديدة</h4>
+        <div class="mb-3">
+            <label for="newCategoryName" class="form-label">اسم الفئة</label>
+            <input type="text" id="newCategoryName" class="form-control" [(ngModel)]="newCategory.name" required>
         </div>
-        <div class="mb-2">
-            <label for="newCatDesc" class="form-label">الوصف (اختياري):</label>
-            <textarea id="newCatDesc" class="form-control form-control-sm" rows="2"
-                [(ngModel)]="newCategoryDescription"></textarea>
+        <div class="mb-3">
+            <label for="newCategoryDescription" class="form-label">الوصف (اختياري)</label>
+            <textarea id="newCategoryDescription" class="form-control" [(ngModel)]="newCategory.description"
+                rows="3"></textarea>
         </div>
-        <div class="text-end">
-            <button class="btn btn-secondary btn-sm me-2" (click)="toggleAddForm()">إلغاء</button>
-            <button class="btn btn-success btn-sm" (click)="saveNewCategory()"
-                [disabled]="!newCategoryName">حفظ</button>
+        <div class="d-flex justify-content-end">
+            <button type="button" class="btn btn-success me-2" (click)="saveNewCategory()"
+                [disabled]="isLoading || !newCategory.name">إضافة</button>
+            <button type="button" class="btn btn-secondary" (click)="toggleAddForm()">إلغاء</button>
         </div>
     </div>
 
@@ -53,39 +51,19 @@
             <tbody>
                 <ng-container *ngFor="let category of (categories$ | async)">
                     <!-- Display Row -->
-                    <tr *ngIf="editingCategory?.id !== category.id">
+                    <tr>
                         <td>{{ category.name }}</td>
-                        <td>{{ category.description }}</td>
+                        <td>{{ category.description || '-' }}</td>
                         <td>
-                            <button class="btn btn-sm btn-outline-secondary me-2" (click)="startEditing(category)"
-                                title="تعديل الفئة">
-                                <i class="fas fa-edit"></i>
-                            </button>
+                            <!-- Delete Button -->
                             <button class="btn btn-sm btn-outline-danger" (click)="deleteCategory(category.id)"
                                 title="حذف الفئة">
                                 <i class="fas fa-trash"></i>
                             </button>
                         </td>
                     </tr>
-                    <!-- Editing Row (Inline) -->
-                    <tr *ngIf="editingCategory?.id === category.id">
-                        <td><input type="text" class="form-control form-control-sm" [(ngModel)]="editingCategory.name"
-                                required></td>
-                        <td><textarea class="form-control form-control-sm" rows="1"
-                                [(ngModel)]="editingCategory.description"></textarea></td>
-                        <td>
-                            <button class="btn btn-sm btn-outline-success me-2" (click)="saveEditedCategory()"
-                                [disabled]="!editingCategory.name" title="حفظ التعديل">
-                                <i class="fas fa-check"></i>
-                            </button>
-                            <button class="btn btn-sm btn-outline-secondary" (click)="cancelEditing()"
-                                title="إلغاء التعديل">
-                                <i class="fas fa-times"></i>
-                            </button>
-                        </td>
-                    </tr>
                 </ng-container>
-                <tr *ngIf="!(categories$ | async)?.length">
+                <tr *ngIf="!(categories$ | async)?.length && !isLoading">
                     <td colspan="3" class="text-center text-muted">لا يوجد فئات لعرضها.</td>
                 </tr>
             </tbody>

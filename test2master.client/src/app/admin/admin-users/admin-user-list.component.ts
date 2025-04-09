@@ -3,7 +3,7 @@ import { CommonModule, DatePipe } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { Observable, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
-import { AdminUserService, AdminUser } from '../../Services/admin/admin-user.service';
+import { AdminUserService, AdminUser, AddUserModel } from '../../Services/admin/admin-user.service';
 import { FormsModule } from '@angular/forms';
 
 @Component({
@@ -19,6 +19,9 @@ export class AdminUserListComponent implements OnInit {
     isLoading = true;
     errorMessage: string | null = null;
     successMessage: string | null = null;
+    // Add variables for Add User form
+    showAddUserForm: boolean = false;
+    newUser: Partial<AdminUser> & { password?: string } = { role: 'Buyer' }; // Default role to Buyer
 
     // Variables for inline editing
     editingUser: AdminUser | null = null;
@@ -90,15 +93,24 @@ export class AdminUserListComponent implements OnInit {
         this.errorMessage = null; // Clear any validation errors
     }
 
-    deleteUser(userId: string | number): void {
+    deleteUser(userToDelete: AdminUser): void {
+        // Prevent deleting other admins
+        if (userToDelete.role === 'Admin') {
+            this.errorMessage = 'لا يمكن حذف مسؤول آخر.';
+            this.successMessage = null;
+            // Optionally hide the message after a few seconds
+            setTimeout(() => this.errorMessage = null, 5000);
+            return; // Stop execution
+        }
+
         // Use a more user-friendly confirmation
-        if (!confirm('هل أنت متأكد أنك تريد حذف هذا المستخدم؟ لا يمكن التراجع عن هذا الإجراء.')) return;
+        if (!confirm(`هل أنت متأكد أنك تريد حذف المستخدم ${userToDelete.username}؟ لا يمكن التراجع عن هذا الإجراء.`)) return;
 
         this.isLoading = true; // Show loading indicator
         this.errorMessage = null;
         this.successMessage = null;
 
-        this.adminUserService.deleteUser(userId).subscribe({
+        this.adminUserService.deleteUser(userToDelete.id).subscribe({
             next: (res) => {
                 // Use message from response if available
                 this.successMessage = res?.message || 'User deleted successfully.';
@@ -139,4 +151,50 @@ export class AdminUserListComponent implements OnInit {
             default: return 'bg-secondary';
         }
     }
+
+    // --- Add User Methods ---
+    toggleAddUserForm(): void {
+        this.showAddUserForm = !this.showAddUserForm;
+        this.newUser = { role: 'Buyer' }; // Reset form when toggling
+        this.errorMessage = null;
+        this.successMessage = null;
+    }
+
+    addUser(): void {
+        // Explicitly check for required fields for adding
+        if (!this.newUser.username || !this.newUser.email || !this.newUser.password || !this.newUser.role) {
+            this.errorMessage = 'الرجاء ملء جميع الحقول المطلوبة (اسم المستخدم، البريد الإلكتروني، كلمة المرور، الدور).';
+            this.successMessage = null; // Clear success message too
+            return;
+        }
+
+        // Create an object guaranteed to match AddUserModel structure,
+        // satisfying TypeScript AND the runtime check ensures properties exist.
+        const userToAdd: AddUserModel = {
+            username: this.newUser.username, // Guaranteed string by check
+            email: this.newUser.email,       // Guaranteed string by check
+            password: this.newUser.password, // Guaranteed string by check
+            role: this.newUser.role         // Guaranteed string by check
+        };
+
+        this.isLoading = true;
+        this.errorMessage = null;
+        this.successMessage = null;
+
+        // Pass the correctly typed object to the service
+        this.adminUserService.addUser(userToAdd).subscribe({
+            next: (res) => {
+                this.successMessage = res?.message || 'تمت إضافة المستخدم بنجاح.';
+                this.showAddUserForm = false; // Hide form
+                this.newUser = { role: 'Buyer' }; // Reset form
+                this.loadUsers(); // Refresh list
+                setTimeout(() => this.successMessage = null, 3000);
+            },
+            error: (err) => {
+                this.errorMessage = err.error?.message || err.message || 'فشل في إضافة المستخدم.';
+                this.isLoading = false;
+            }
+        });
+    }
+    // --- End Add User Methods ---
 } 

@@ -41,8 +41,9 @@
             <tbody>
                 <tr *ngFor="let product of (sellerProducts$ | async)">
                     <td>
-                        <img [src]="product.imageUrl || 'https://via.placeholder.com/50'" alt="{{ product.name }}"
-                            class="product-thumbnail">
+                        <!-- Use product.img based on the backend/interface -->
+                        <img [src]="product.img || 'https://via.placeholder.com/50/eeeeee/999999?text=N/A'"
+                            alt="{{ product.name }}" class="product-thumbnail">
                     </td>
                     <td>{{ product.name }}</td>
                     <td>{{ product.price | currency:'JOD' }}</td> <!-- Adjust currency as needed -->

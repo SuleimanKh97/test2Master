@@ -62,8 +62,11 @@ export class SellerProductFormComponent implements OnInit {
             const productRequest = this.sellerProductService.getProductById(Number(this.productId)).pipe(
                 catchError(err => {
                     console.error('Error loading product data:', err);
-                    // Append to existing error message or set a new one
-                    this.errorMessage = (this.errorMessage ? this.errorMessage + ' ' : '') + 'فشل تحميل بيانات المنتج.';
+                    // Try to use the specific error message from the backend
+                    const backendErrorMessage = err?.message || 'فشل تحميل بيانات المنتج.';
+                    this.errorMessage = backendErrorMessage;
+                    // Append general context if needed
+                    // this.errorMessage = `فشل تحميل بيانات المنتج: ${backendErrorMessage}`;
                     return of(null); // Return null on product load error
                 })
             );
@@ -93,8 +96,7 @@ export class SellerProductFormComponent implements OnInit {
             description: ['', Validators.required],
             price: [null, [Validators.required, Validators.min(0.01)]], // Price must be positive
             categoryId: [null, Validators.required], // Add categoryId field
-            imageUrl: [''] // Optional
-            // Add other fields like category here if needed
+            img: [''] // Use 'img' to match backend/service interface
         });
     }
 
@@ -115,7 +117,7 @@ export class SellerProductFormComponent implements OnInit {
             description: this.f['description'].value,
             price: this.f['price'].value,
             categoryId: this.f['categoryId'].value, // Now this exists
-            img: this.f['imageUrl']?.value || '' // Handle potentially missing imageUrl
+            img: this.f['img']?.value || '' // Read from 'img' control
         };
 
         const saveOperation: Observable<any> = this.isEditMode

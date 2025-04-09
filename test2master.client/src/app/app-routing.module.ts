@@ -23,11 +23,14 @@ import { AdminUserListComponent } from './admin/admin-users/admin-user-list.comp
 import { AdminProductListComponent } from './admin/admin-products/admin-product-list.component';
 import { AdminOrderListComponent } from './admin/admin-orders/admin-order-list.component';
 import { AdminCategoryListComponent } from './admin/admin-categories/admin-category-list.component';
+import { ShopComponent } from './shop/shop.component';
+import { ProductDetailComponent } from './product-detail/product-detail.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent },
-  { path: 'shop', component: ProductListComponent },
-  { path: 'product/:id', component: ProductDetailsComponent },
+  //{ path: 'shop', component: ProductListComponent },
+  { path: 'shop', component: ShopComponent },
+  { path: 'product/:id', component: ProductDetailComponent },
   { path: 'contact', component: ContactComponent },
   { path: 'cart', component: CartComponent },
   { path: 'login', component: LoginComponent },

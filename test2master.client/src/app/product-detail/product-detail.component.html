@@ -1,0 +1,59 @@
+<div class="container mt-5">
+    <!-- Loading Indicator -->
+    <div *ngIf="isLoading" class="text-center">
+        <div class="spinner-border" role="status">
+            <span class="visually-hidden">جار التحميل...</span>
+        </div>
+    </div>
+
+    <!-- Error Message -->
+    <div *ngIf="errorMessage && !isLoading" class="alert alert-danger">
+        <strong>خطأ:</strong> {{ errorMessage }}
+    </div>
+
+    <!-- Product Details -->
+    <div *ngIf="product && !isLoading" class="row">
+        <!-- Product Image -->
+        <div class="col-md-6 mb-3 mb-md-0">
+            <img [src]="product.img || 'assets/placeholder-image.png'" class="img-fluid rounded shadow-sm"
+                alt="{{ product.name }}" onerror="this.src='assets/placeholder-image.png'">
+        </div>
+
+        <!-- Product Info -->
+        <div class="col-md-6">
+            <h2>{{ product.name }}</h2>
+            <p class="text-muted">
+                <span>الفئة: {{ product.categoryName }}</span> |
+                <span>البائع: {{ product.sellerName }}</span>
+                <span *ngIf="product.createdAt"> | تاريخ الإضافة: {{ product.createdAt | date:'shortDate' }}</span>
+            </p>
+
+            <h3 class="text-success fw-bold my-3">{{ product.price | currency:'JOD' }}</h3>
+
+            <h4>الوصف</h4>
+            <p>{{ product.description || 'لا يوجد وصف متاح.' }}</p>
+
+            <!-- Action Buttons -->
+            <div class="d-grid gap-2 d-sm-flex justify-content-start mt-4">
+                <button class="btn btn-primary btn-lg me-sm-2 mb-2 mb-sm-0" (click)="addToCart()" [disabled]="!product">
+                    <i class="fas fa-cart-plus me-2"></i> أضف إلى السلة
+                </button>
+                <button class="btn btn-success btn-lg" (click)="buyNow()" [disabled]="!product">
+                    <i class="fas fa-shopping-bag me-2"></i> الشراء الآن
+                </button>
+            </div>
+            <!-- Optional: Display add-to-cart/buy-now error here too -->
+            <div *ngIf="errorMessage" class="alert alert-danger mt-3">
+                {{ errorMessage }}
+            </div>
+        </div>
+    </div>
+
+    <!-- Back Button -->
+    <div class="mt-4">
+        <button class="btn btn-outline-secondary" (click)="goBack()">
+            <i class="fas fa-arrow-left me-1"></i> العودة للمتجر
+        </button>
+    </div>
+
+</div>

@@ -48,3 +48,44 @@ tbody .btn {
     padding: 0.25rem 0.5rem;
     font-size: 0.875rem;
 }
+
+/* Add custom styles for order history */
+
+.status-pending {
+    color: #ffc107;
+    /* Amber */
+    font-weight: bold;
+}
+
+.status-processing {
+    color: #0dcaf0;
+    /* Info Blue */
+    font-weight: bold;
+}
+
+.status-shipped {
+    color: #0d6efd;
+    /* Primary Blue */
+    font-weight: bold;
+}
+
+.status-delivered {
+    color: #198754;
+    /* Success Green */
+    font-weight: bold;
+}
+
+.status-cancelled {
+    color: #dc3545;
+    /* Danger Red */
+    text-decoration: line-through;
+}
+
+.accordion-button:not(.collapsed) {
+    background-color: #e7f1ff;
+    color: #0c63e4;
+}
+
+.accordion-button:focus {
+    box-shadow: none;
+}

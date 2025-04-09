@@ -1,0 +1,50 @@
+<div class="container mt-4">
+    <h2>المتجر</h2>
+
+    <!-- Loading Indicator -->
+    <div *ngIf="!(products$ | async) && !errorMessage" class="text-center">
+        <div class="spinner-border" role="status">
+            <span class="visually-hidden">جار التحميل...</span>
+        </div>
+    </div>
+
+    <!-- Error Message -->
+    <div *ngIf="errorMessage" class="alert alert-danger">
+        {{ errorMessage }}
+    </div>
+
+    <!-- Product Grid -->
+    <div *ngIf="(products$ | async) as products" class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+
+        <div *ngIf="products.length === 0 && !errorMessage" class="col-12">
+            <p class="text-center text-muted">لا توجد منتجات متاحة حالياً.</p>
+        </div>
+
+        <div *ngFor="let product of products" class="col">
+            <div class="card h-100 shadow-sm">
+                <img [src]="product.img || 'assets/placeholder-image.png'" class="card-img-top" alt="{{ product.name }}"
+                    style="height: 200px; object-fit: cover;" onerror="this.src='assets/placeholder-image.png'">
+
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title">{{ product.name }}</h5>
+                    <p class="card-text text-muted small mb-2">البائع: {{ product.sellerName }}</p>
+                    <p class="card-text flex-grow-1">{{ product.description | slice:0:100 }}{{
+                        product.description.length > 100 ? '...' : '' }}</p>
+                    <p class="card-text fs-5 fw-bold text-success">{{ product.price | currency:'JOD' }}</p>
+
+                    <div class="mt-auto d-grid gap-2 d-sm-flex justify-content-sm-between">
+                        <button class="btn btn-outline-primary btn-sm" (click)="viewDetails(product.id)">
+                            <i class="fas fa-info-circle me-1"></i> تفاصيل
+                        </button>
+                        <button class="btn btn-success btn-sm" (click)="addToCart(product)">
+                            <i class="fas fa-cart-plus me-1"></i> أضف إلى السلة
+                        </button>
+                        <button class="btn btn-warning btn-sm" (click)="buyNow(product)">
+                            <i class="fas fa-shopping-bag me-1"></i> الشراء الآن
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

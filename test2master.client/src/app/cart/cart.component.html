@@ -1,6 +1,12 @@
 <div class="container my-5">
   <h2 class="mb-4">سلة التسوق</h2>
 
+  <!-- Error Message Display -->
+  <div *ngIf="errorMessage" class="alert alert-danger alert-dismissible fade show" role="alert">
+    <strong>خطأ:</strong> {{ errorMessage }}
+    <button type="button" class="btn-close" (click)="errorMessage = null" aria-label="Close"></button>
+  </div>
+
   <div *ngIf="(cartItems$ | async)?.length; else emptyCart">
     <div class="table-responsive">
       <table class="table table-bordered text-center align-middle">

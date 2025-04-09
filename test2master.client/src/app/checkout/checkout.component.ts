@@ -86,21 +86,32 @@ export class CheckoutComponent implements OnInit {
 
         } else {
             // --- Handle Cash On Delivery (or other direct methods) --- 
-            this.orderService.checkout().subscribe({
-                next: (response) => {
+            // Prepare data needed by createOrder (if any, like address)
+            // For now, assume backend gets cart info from token
+            const checkoutData = {
+                paymentMethod: selectedPaymentMethod, // Pass payment method
+                // Add other relevant form data (address, etc.) if needed by backend
+            };
+            console.log('Proceeding with standard checkout...', checkoutData);
+            this.orderService.createOrder(checkoutData).subscribe({
+                next: (response: any) => { // Added type 'any' to response
                     this.isLoading = false;
-                    this.successMessage = response.message || "تم إرسال طلبك بنجاح!";
-                    console.log('COD Checkout successful:', response);
+                    // Use a standard success message or extract from response if available
+                    this.successMessage = response?.message || "تم إرسال طلبك بنجاح!";
+                    console.log('Checkout successful:', response);
+                    // TODO: Cart should be cleared by the backend now
                     this.checkoutForm.reset();
                     this.submitted = false;
+                    // Consider showing order confirmation details instead of just redirecting
+                    // Maybe navigate to a specific order confirmation page: /order/confirmation/:orderId
                     setTimeout(() => {
-                        this.router.navigate(['/order-history']);
-                    }, 2000);
+                        this.router.navigate(['/order-history']); // Redirect after a delay
+                    }, 2000); // 2 second delay
                 },
-                error: (err) => {
+                error: (err: any) => { // Added type 'any' to err
                     this.isLoading = false;
-                    this.errorMessage = err.error?.message || 'فشل إتمام الطلب. يرجى المحاولة مرة أخرى.';
-                    console.error('COD Checkout failed:', err);
+                    this.errorMessage = err?.message || err?.error?.message || 'فشل إتمام الطلب. يرجى المحاولة مرة أخرى.';
+                    console.error('Checkout failed:', err);
                 }
             });
             // -----------------------------------------------------

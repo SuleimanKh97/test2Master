@@ -1,10 +1,28 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, throwError, of } from 'rxjs';
+import { map, catchError, tap, switchMap } from 'rxjs/operators';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Product } from '../../Models/product.module';
-
 
 export interface CartItem {
   product: Product;
+  quantity: number;
+}
+
+interface CartItemResponseDTO {
+  productId: number;
+  productName: string;
+  quantity: number;
+  price: number;
+  imageUrl: string | null;
+}
+
+interface AddItemToCartRequestDTO {
+  productId: number;
+  quantity: number;
+}
+
+interface UpdateCartItemQuantityRequestDTO {
   quantity: number;
 }
 
@@ -12,23 +30,14 @@ export interface CartItem {
   providedIn: 'root'
 })
 export class CartService {
-  private cartItems: CartItem[] = [];
-  private cartItemsSubject: BehaviorSubject<CartItem[]> = new BehaviorSubject<CartItem[]>([]);
-  private cartTotalSubject: BehaviorSubject<number> = new BehaviorSubject<number>(0);
-  private cartCountSubject: BehaviorSubject<number> = new BehaviorSubject<number>(0);
+  private apiUrl = 'https://localhost:7158/Cart';
 
-  constructor() {
-    // Load cart from localStorage if available
-    const savedCart = localStorage.getItem('cart');
-    if (savedCart) {
-      try {
-        this.cartItems = JSON.parse(savedCart);
-        this.updateCart();
-      } catch (error) {
-        console.error('Error loading cart from localStorage', error);
-        this.cartItems = [];
-      }
-    }
+  private cartItemsSubject = new BehaviorSubject<CartItem[]>([]);
+  private cartTotalSubject = new BehaviorSubject<number>(0);
+  private cartCountSubject = new BehaviorSubject<number>(0);
+
+  constructor(private http: HttpClient) {
+    this.loadCartFromServer();
   }
 
   getCartItems(): Observable<CartItem[]> {
@@ -43,57 +52,106 @@ export class CartService {
     return this.cartCountSubject.asObservable();
   }
 
-  addToCart(product: Product, quantity = 1): void {
-    const existingItem = this.cartItems.find(item => item.product.id === product.id);
+  // --- Public Method to Force Refresh ---
+  refreshCart(): Observable<CartItem[]> {
+    // Simply trigger the reload mechanism
+    console.log('CartService: Explicitly refreshing cart from server...');
+    return this.loadCartFromServer();
+  }
 
-    if (existingItem) {
-      existingItem.quantity += quantity;
-    } else {
-      this.cartItems.push({ product, quantity });
+  private loadCartFromServer(): Observable<CartItem[]> {
+    console.log('CartService: Loading cart from server...');
+    return this.http.get<CartItemResponseDTO[]>(this.apiUrl).pipe(
+      map(dtos => this.mapDtosToCartItems(dtos)),
+      tap(cartItems => {
+        console.log('CartService: Cart loaded/refreshed:', cartItems);
+        this.updateSubjects(cartItems);
+      }),
+      catchError(this.handleError<CartItem[]>('loadCartFromServer', []))
+    );
+  }
+
+  addToCart(product: Product, quantity = 1): Observable<CartItem[]> {
+    console.log(`CartService: Adding product ${product.id} with quantity ${quantity} to server cart...`);
+    const request: AddItemToCartRequestDTO = {
+      productId: product.id,
+      quantity: quantity
+    };
+    return this.http.post<any>(this.apiUrl, request).pipe(
+      switchMap(() => this.loadCartFromServer()),
+      catchError(this.handleError<CartItem[]>('addToCart'))
+    );
+  }
+
+  updateQuantity(productId: number, quantity: number): Observable<CartItem[]> {
+    console.log(`CartService: Updating product ${productId} quantity to ${quantity} on server...`);
+    if (quantity <= 0) {
+      return this.removeFromCart(productId);
     }
-
-    this.updateCart();
+    const request: UpdateCartItemQuantityRequestDTO = { quantity };
+    const url = `${this.apiUrl}/${productId}`;
+    return this.http.put<any>(url, request).pipe(
+      switchMap(() => this.loadCartFromServer()),
+      catchError(this.handleError<CartItem[]>('updateQuantity'))
+    );
   }
 
-  removeFromCart(productId: number): void {
-    this.cartItems = this.cartItems.filter(item => item.product.id !== productId);
-    this.updateCart();
+  removeFromCart(productId: number): Observable<CartItem[]> {
+    console.log(`CartService: Removing product ${productId} from server cart...`);
+    const url = `${this.apiUrl}/${productId}`;
+    return this.http.delete<any>(url).pipe(
+      switchMap(() => this.loadCartFromServer()),
+      catchError(this.handleError<CartItem[]>('removeFromCart'))
+    );
   }
 
-  updateQuantity(productId: number, quantity: number): void {
-    const item = this.cartItems.find(item => item.product.id === productId);
+  clearCart(): Observable<CartItem[]> {
+    console.log('CartService: Clearing server cart...');
+    return this.http.delete<any>(this.apiUrl).pipe(
+      switchMap(() => this.loadCartFromServer()),
+      catchError(this.handleError<CartItem[]>('clearCart'))
+    );
+  }
 
-    if (item) {
-      item.quantity = quantity;
-      if (item.quantity <= 0) {
-        this.removeFromCart(productId);
-      } else {
-        this.updateCart();
+  private mapDtosToCartItems(dtos: CartItemResponseDTO[]): CartItem[] {
+    return dtos.map(dto => ({
+      quantity: dto.quantity,
+      product: {
+        id: dto.productId,
+        name: dto.productName,
+        price: dto.price,
+        imageUrl: dto.imageUrl || '',
+        description: '',
+        category: 'Unknown',
+        originalPrice: dto.price
       }
-    }
+    }));
   }
 
-  clearCart(): void {
-    this.cartItems = [];
-    this.updateCart();
-  }
+  private updateSubjects(cartItems: CartItem[]): void {
+    this.cartItemsSubject.next([...cartItems]);
 
-  private updateCart(): void {
-    this.cartItemsSubject.next([...this.cartItems]);
-
-    const total = this.cartItems.reduce(
+    const total = cartItems.reduce(
       (sum, item) => sum + (item.product.price * item.quantity),
       0
     );
     this.cartTotalSubject.next(total);
 
-    const count = this.cartItems.reduce(
+    const count = cartItems.reduce(
       (sum, item) => sum + item.quantity,
       0
     );
     this.cartCountSubject.next(count);
+  }
 
-    // Save to localStorage
-    localStorage.setItem('cart', JSON.stringify(this.cartItems));
+  private handleError<T>(operation = 'operation', result?: T) {
+    return (error: HttpErrorResponse): Observable<T> => {
+      console.error(`${operation} failed: ${error.message}`, error);
+      let userMessage = `An error occurred during ${operation}.`;
+      if (error.status === 401) {
+        userMessage = "Authentication required. Please log in.";
+      }
+      return throwError(() => new Error(`${userMessage} Status: ${error.status}`));
+    };
   }
 }

@@ -1,0 +1,74 @@
+<div class="product-list-container" dir="rtl">
+    <h2>إدارة منتجاتك</h2>
+
+    <!-- Loading Indicator -->
+    <div *ngIf="isLoading" class="loading-indicator">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">جار التحميل...</span>
+        </div>
+    </div>
+
+    <!-- Error Message -->
+    <div *ngIf="errorMessage" class="alert alert-danger">
+        {{ errorMessage }}
+    </div>
+
+    <!-- Success Message -->
+    <div *ngIf="successMessage" class="alert alert-success">
+        {{ successMessage }}
+    </div>
+
+    <!-- Add Product Button -->
+    <div class="mb-3 text-end">
+        <!-- Use routerLink to navigate to the add product page -->
+        <a routerLink="/seller/products/add" class="btn btn-primary">
+            <i class="fas fa-plus me-2"></i> إضافة منتج جديد
+        </a>
+    </div>
+
+    <!-- Products Table -->
+    <div *ngIf="!isLoading && !errorMessage" class="table-responsive">
+        <table class="table table-striped table-hover align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th scope="col">الصورة</th>
+                    <th scope="col">الاسم</th>
+                    <th scope="col">السعر</th>
+                    <th scope="col">الكمية المتاحة</th>
+                    <th scope="col">إجراءات</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let product of (sellerProducts$ | async)">
+                    <td>
+                        <img [src]="product.imageUrl || 'https://via.placeholder.com/50'" alt="{{ product.name }}"
+                            class="product-thumbnail">
+                    </td>
+                    <td>{{ product.name }}</td>
+                    <td>{{ product.price | currency:'JOD' }}</td> <!-- Adjust currency as needed -->
+                    <td>
+                        <span
+                            [ngClass]="{'text-danger': product.stockQuantity === 0, 'text-success': product.stockQuantity > 0}">
+                            {{ product.stockQuantity > 0 ? product.stockQuantity : 'نفذت الكمية' }}
+                        </span>
+                    </td>
+                    <td>
+                        <!-- Use routerLink to navigate to the edit page -->
+                        <a [routerLink]="['/seller/products/edit', product.id]"
+                            class="btn btn-sm btn-outline-secondary me-2" title="تعديل">
+                            <i class="fas fa-edit"></i>
+                        </a>
+                        <button (click)="deleteProduct(product.id)" class="btn btn-sm btn-outline-danger" title="حذف">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+                <!-- Handle case where there are no products -->
+                <tr *ngIf="(sellerProducts$ | async)?.length === 0">
+                    <td colspan="5" class="text-center text-muted">لم تقم بإضافة أي منتجات بعد.</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+</div>

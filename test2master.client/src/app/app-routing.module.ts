@@ -16,6 +16,9 @@ import { EditProfileComponent } from './user/edit-profile/edit-profile.component
 import { ChangePasswordComponent } from './user/change-password/change-password.component';
 import { OrderHistoryComponent } from './user/order-history/order-history.component';
 import { CheckoutComponent } from './checkout/checkout.component';
+import { SellerProductListComponent } from './seller/seller-products/seller-product-list.component';
+import { SellerProductFormComponent } from './seller/seller-products/seller-product-form.component';
+import { SellerOrderListComponent } from './seller/seller-orders/seller-order-list.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -32,6 +35,30 @@ const routes: Routes = [
   { path: 'checkout', component: CheckoutComponent, canActivate: [AuthGuard] },
   { path: 'buyer-dashboard', component: BuyerDashboardComponent, canActivate: [AuthGuard], data: { roles: ['Buyer'] } },
   { path: 'seller-dashboard', component: SellerDashboardComponent, canActivate: [AuthGuard], data: { roles: ['Seller'] } },
+  {
+    path: 'seller/products',
+    component: SellerProductListComponent,
+    canActivate: [AuthGuard],
+    data: { roles: ['Seller'] }
+  },
+  {
+    path: 'seller/products/add',
+    component: SellerProductFormComponent,
+    canActivate: [AuthGuard],
+    data: { roles: ['Seller'] }
+  },
+  {
+    path: 'seller/products/edit/:id',
+    component: SellerProductFormComponent,
+    canActivate: [AuthGuard],
+    data: { roles: ['Seller'] }
+  },
+  {
+    path: 'seller/orders',
+    component: SellerOrderListComponent,
+    canActivate: [AuthGuard],
+    data: { roles: ['Seller'] }
+  },
   { path: 'admin-dashboard', component: AdminDashboardComponent, canActivate: [AuthGuard], data: { roles: ['Admin'] } }
 ];
 

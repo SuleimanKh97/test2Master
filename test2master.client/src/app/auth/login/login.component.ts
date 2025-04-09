@@ -109,12 +109,13 @@ export class LoginComponent implements OnInit {
     this.authService.login(this.loginForm.value).subscribe({
       next: (res: LoginResponse) => {
         console.log('Login successful! Response:', res);
-        // Always navigate to the profile page after successful login
-        console.log('Navigating to /profile');
-        this.router.navigate(['/profile']);
 
-        /* --- Comment out the old role-based navigation ---
-        const role = res.role?.toLowerCase();
+        // --- Remove or comment out the fixed navigation to /profile --- 
+        // console.log('Navigating to /profile');
+        // this.router.navigate(['/profile']); 
+
+        // --- Re-enable the role-based navigation ---
+        const role = res.role?.toLowerCase(); // Use optional chaining and convert to lower case
         console.log('Detected role:', role);
         if (role === 'admin') {
           console.log('Navigating to /admin-dashboard');
@@ -127,9 +128,9 @@ export class LoginComponent implements OnInit {
           this.router.navigate(['/buyer-dashboard']);
         } else {
           console.warn('Unknown or missing role. Navigating to home.', res.role);
-          this.router.navigate(['/']);
+          this.router.navigate(['/']); // Navigate to home page as a fallback
         }
-        */
+        // --- End of role-based navigation ---
       },
       error: (err) => {
         console.error('Login failed in subscribe block:', err);

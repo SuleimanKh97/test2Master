@@ -1,0 +1,113 @@
+/* seller-order-list.component.css */
+
+.order-list-container {
+    padding: 2rem;
+}
+
+.order-list-container h2 {
+    margin-bottom: 1.5rem;
+    color: #333;
+}
+
+.loading-indicator {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem;
+    min-height: 200px;
+}
+
+.accordion-button {
+    width: 100%;
+    text-align: right;
+    /* Ensure text aligns right for RTL */
+}
+
+.accordion-button:not(.collapsed) {
+    background-color: #e7f1ff;
+    /* Light blue when expanded */
+    color: #0c63e4;
+}
+
+.accordion-button::after {
+    margin-left: auto;
+    /* Push the arrow to the left for RTL */
+    margin-right: 0;
+}
+
+.order-summary {
+    display: flex;
+    flex-wrap: wrap;
+    /* Allow items to wrap on smaller screens */
+    justify-content: space-between;
+    width: 100%;
+    gap: 10px;
+    /* Add gap between summary items */
+    font-size: 0.9rem;
+}
+
+.order-summary>span {
+    flex-basis: auto;
+    /* Allow items to size naturally */
+    margin-right: 15px;
+    /* Spacing between items */
+}
+
+.accordion-body h5 {
+    margin-top: 1rem;
+    margin-bottom: 0.5rem;
+    color: #444;
+}
+
+.accordion-body p {
+    margin-bottom: 0.75rem;
+}
+
+.list-group-item {
+    font-size: 0.9rem;
+}
+
+.list-group-item span.text-muted {
+    font-size: 0.85rem;
+}
+
+/* Status Badge Styles */
+.badge {
+    padding: 0.4em 0.6em;
+    font-size: 0.85em;
+    vertical-align: middle;
+}
+
+.status-pending {
+    background-color: #ffc107;
+    /* Yellow */
+    color: #333;
+}
+
+.status-processing {
+    background-color: #0dcaf0;
+    /* Cyan */
+    color: #fff;
+}
+
+.status-shipped {
+    background-color: #0d6efd;
+    /* Blue */
+    color: #fff;
+}
+
+.status-delivered {
+    background-color: #198754;
+    /* Green */
+    color: #fff;
+}
+
+.status-cancelled {
+    background-color: #dc3545;
+    /* Red */
+    color: #fff;
+}
+
+.alert {
+    margin-top: 1rem;
+}

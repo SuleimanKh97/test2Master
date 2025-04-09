@@ -1,0 +1,62 @@
+/* seller-product-list.component.css */
+
+.product-list-container {
+    padding: 2rem;
+}
+
+.product-list-container h2 {
+    margin-bottom: 1.5rem;
+    color: #333;
+}
+
+.loading-indicator {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem;
+    min-height: 200px;
+    /* Ensure space while loading */
+}
+
+.product-thumbnail {
+    max-width: 50px;
+    height: auto;
+    border-radius: 4px;
+    vertical-align: middle;
+}
+
+.table th,
+.table td {
+    vertical-align: middle;
+}
+
+.table .btn-sm i {
+    font-size: 0.9rem;
+    /* Adjust icon size in small buttons */
+}
+
+.text-danger {
+    font-weight: bold;
+}
+
+.text-success {
+    /* You can add styling for success text if needed */
+}
+
+/* Center align table actions if desired */
+.table thead th:last-child,
+.table tbody td:last-child {
+    text-align: center;
+    white-space: nowrap;
+    /* Prevent buttons from wrapping */
+}
+
+/* Adjust button spacing */
+.table td:last-child .btn {
+    margin: 0 2px;
+    /* Small horizontal margin */
+}
+
+.alert {
+    margin-top: 1rem;
+}

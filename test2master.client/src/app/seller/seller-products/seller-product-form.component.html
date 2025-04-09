@@ -1,0 +1,83 @@
+<div class="product-form-container" dir="rtl">
+    <h2>{{ pageTitle }}</h2>
+
+    <!-- Loading Indicator -->
+    <div *ngIf="isLoading && isEditMode" class="loading-indicator">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">جار تحميل بيانات المنتج...</span>
+        </div>
+    </div>
+
+    <!-- Error Message -->
+    <div *ngIf="errorMessage" class="alert alert-danger">
+        {{ errorMessage }}
+    </div>
+
+    <!-- Product Form -->
+    <form [formGroup]="productForm" (ngSubmit)="onSubmit()" *ngIf="!isLoading || !isEditMode">
+        <!-- Show form once loading is done for edit mode, or always in add mode -->
+
+        <!-- Product Name -->
+        <div class="mb-3">
+            <label for="productName" class="form-label">اسم المنتج</label>
+            <input type="text" id="productName" class="form-control" formControlName="name"
+                [ngClass]="{ 'is-invalid': submitted && f['name'].errors }">
+            <div *ngIf="submitted && f['name'].errors" class="invalid-feedback">
+                <div *ngIf="f['name'].errors['required']">اسم المنتج مطلوب.</div>
+            </div>
+        </div>
+
+        <!-- Product Description -->
+        <div class="mb-3">
+            <label for="productDescription" class="form-label">الوصف</label>
+            <textarea id="productDescription" class="form-control" formControlName="description" rows="4"
+                [ngClass]="{ 'is-invalid': submitted && f['description'].errors }"></textarea>
+            <div *ngIf="submitted && f['description'].errors" class="invalid-feedback">
+                <div *ngIf="f['description'].errors['required']">وصف المنتج مطلوب.</div>
+            </div>
+        </div>
+
+        <!-- Product Price -->
+        <div class="mb-3">
+            <label for="productPrice" class="form-label">السعر (بالدينار)</label>
+            <input type="number" id="productPrice" class="form-control" formControlName="price"
+                [ngClass]="{ 'is-invalid': submitted && f['price'].errors }" step="0.01">
+            <div *ngIf="submitted && f['price'].errors" class="invalid-feedback">
+                <div *ngIf="f['price'].errors['required']">السعر مطلوب.</div>
+                <div *ngIf="f['price'].errors['min']">يجب أن يكون السعر موجبًا.</div>
+            </div>
+        </div>
+
+        <!-- Stock Quantity -->
+        <div class="mb-3">
+            <label for="stockQuantity" class="form-label">الكمية المتاحة</label>
+            <input type="number" id="stockQuantity" class="form-control" formControlName="stockQuantity"
+                [ngClass]="{ 'is-invalid': submitted && f['stockQuantity'].errors }" step="1">
+            <div *ngIf="submitted && f['stockQuantity'].errors" class="invalid-feedback">
+                <div *ngIf="f['stockQuantity'].errors['required']">الكمية المتاحة مطلوبة.</div>
+                <div *ngIf="f['stockQuantity'].errors['min']">لا يمكن أن تكون الكمية سالبة.</div>
+            </div>
+        </div>
+
+        <!-- Image URL (Optional) -->
+        <div class="mb-3">
+            <label for="imageUrl" class="form-label">رابط صورة المنتج (اختياري)</label>
+            <input type="url" id="imageUrl" class="form-control" formControlName="imageUrl">
+            <!-- Basic URL validation is handled by type="url", add pattern validator if stricter format needed -->
+        </div>
+
+        <!-- Add other fields like Category dropdown here -->
+
+        <!-- Form Actions -->
+        <div class="d-flex justify-content-end gap-2 mt-4">
+            <button type="button" class="btn btn-secondary" (click)="cancel()">إلغاء</button>
+            <button type="submit" class="btn btn-primary" [disabled]="isLoading">
+                <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-1" role="status"
+                    aria-hidden="true"></span>
+                {{ isEditMode ? 'حفظ التعديلات' : 'إضافة المنتج' }}
+            </button>
+        </div>
+
+    </form>
+
+</div>

@@ -25,6 +25,12 @@ export class AuthService {
         if (res?.token) {
           this.setToken(res.token);
           localStorage.setItem('user', JSON.stringify(res));
+          if (res.userId) { 
+            localStorage.setItem('userId', res.userId);
+            console.log('Stored userId:', res.userId);
+          } else {
+            console.warn('userId not found in login response.');
+          }
           this.currentUserSubject.next(res);
         }
       })

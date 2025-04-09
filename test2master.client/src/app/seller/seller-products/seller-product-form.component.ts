@@ -76,7 +76,11 @@ export class SellerProductFormComponent implements OnInit {
                 .pipe(finalize(() => this.isLoading = false))
                 .subscribe(({ product }) => {
                     if (product) {
+                        console.log('Product data received:', product);
                         this.productForm.patchValue(product);
+                        console.log('Form values after patchValue:', this.productForm.value);
+                    } else {
+                        console.error('Product data received is null or undefined');
                     }
                     // Categories are handled by availableCategories$
                 });

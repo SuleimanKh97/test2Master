@@ -3,13 +3,32 @@ import { Injectable } from '@angular/core';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
-// Define the expected response structure from POST /Order
+// --- Define and Export DTOs ---
+export interface OrderItemDTO {
+    productName: string;
+    quantity: number;
+    price: number;
+    imageUrl?: string;
+    // Add other relevant fields if needed
+}
+
+export interface OrderDetailDTO {
+    orderId: number;
+    orderDate: string; // Or Date
+    totalAmount: number;
+    status: string;
+    orderItems: OrderItemDTO[];
+    // Add other relevant fields like shipping address etc. if needed
+}
+
+// Original response interface for createOrder
 interface CreateOrderResponse {
     message: string;
     orderIds: number[];
     requiresPayment: boolean;
     primaryOrderId?: number; // Order ID to use for initiating payment simulation
 }
+// -----------------------------
 
 @Injectable({
     providedIn: 'root'
@@ -36,19 +55,31 @@ export class OrderService {
             );
     }
 
-    getMyOrders(status?: string): Observable<any[]> { // Replace 'any' with your OrderDetailDTO if defined in frontend
+    getMyOrders(status?: string): Observable<OrderDetailDTO[]> {
         let params = new HttpParams();
         if (status) {
             params = params.set('status', status);
         }
         // Construct URL for getMyOrders
-        return this.http.get<any[]>(`${this.baseUrl}/MyOrders`, { params })
+        return this.http.get<OrderDetailDTO[]>(`${this.baseUrl}/MyOrders`, { params })
             .pipe(catchError(this.handleError));
     }
 
     cancelOrder(orderId: number): Observable<any> { // Replace 'any' with a specific response type
         // Construct URL for cancelOrder
         return this.http.put<any>(`${this.baseUrl}/${orderId}/cancel`, {})
+            .pipe(catchError(this.handleError));
+    }
+
+    // --- New method for Buyer ---
+    /**
+     * Marks an order as delivered by the buyer.
+     * @param orderId The ID of the order to mark as delivered.
+     * @returns Observable with the success message or error.
+     */
+    markOrderAsDelivered(orderId: number): Observable<{ message: string }> {
+        console.log(`Marking order ${orderId} as delivered by buyer.`);
+        return this.http.put<{ message: string }>(`${this.baseUrl}/${orderId}/mark-delivered`, {})
             .pipe(catchError(this.handleError));
     }
 

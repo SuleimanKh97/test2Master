@@ -70,9 +70,17 @@
                                     <span>{{ item.price | currency:'JOD' }} للقطعة</span>
                                 </li>
                             </ul>
-                            <div *ngIf="order.status?.toLowerCase() === 'pending'">
+                            <!-- Cancel Button Logic -->
+                            <div *ngIf="order.status?.toLowerCase() === 'pending' || order.status?.toLowerCase() === 'processing'"
+                                class="action-buttons mt-2">
                                 <button class="btn btn-sm btn-outline-danger" (click)="cancelOrder(order.orderId)">
-                                    إلغاء الطلب
+                                    <i class="fas fa-times me-1"></i> إلغاء الطلب
+                                </button>
+                            </div>
+                            <!-- Mark as Delivered Button Logic -->
+                            <div *ngIf="order.status?.toLowerCase() === 'shipped'" class="action-buttons mt-2">
+                                <button class="btn btn-sm btn-success" (click)="markAsDelivered(order.orderId)">
+                                    <i class="fas fa-check-circle me-1"></i> تأكيد الاستلام
                                 </button>
                             </div>
                         </div>

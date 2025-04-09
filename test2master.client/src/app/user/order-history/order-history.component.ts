@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common'; // For standalone
-import { OrderService, OrderDetailDTO } from '../../Services/order/order.service'; // Corrected path
+import { OrderService, OrderDetailDTO } from '../../services/order.service';
 import { RouterModule } from '@angular/router'; // Optional: If linking to order details
 import { Observable, EMPTY } from 'rxjs';
 import { catchError } from 'rxjs/operators';
+import { HttpErrorResponse } from '@angular/common/http'; // Import if needed, or use Error
 
 @Component({
     selector: 'app-order-history',
@@ -89,6 +90,23 @@ export class OrderHistoryComponent implements OnInit {
                 error: (err) => {
                     console.error('Error cancelling order:', err);
                     this.errorMessage = err.message || 'فشل إلغاء الطلب.';
+                }
+            });
+        }
+    }
+
+    markAsDelivered(orderId: number): void {
+        this.errorMessage = null;
+        if (confirm('هل أنت متأكد من استلام هذا الطلب؟')) {
+            this.orderService.markOrderAsDelivered(orderId).subscribe({
+                next: (response: { message: string }) => {
+                    console.log('Mark as delivered response:', response);
+                    alert(response.message || 'تم تحديث حالة الطلب بنجاح.');
+                    this.loadOrders(this.selectedStatus === 'All' ? undefined : this.selectedStatus);
+                },
+                error: (err: Error) => {
+                    console.error('Error marking order as delivered:', err);
+                    this.errorMessage = err.message || 'فشل تأكيد استلام الطلب.';
                 }
             });
         }

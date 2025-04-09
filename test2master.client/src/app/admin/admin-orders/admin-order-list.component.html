@@ -1,0 +1,51 @@
+<div class="admin-list-container" dir="rtl">
+    <h2>إدارة الطلبات</h2>
+
+    <!-- Loading, Error, Success Messages -->
+    <div *ngIf="isLoading" class="loading-indicator">
+        <div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div>
+    </div>
+    <div *ngIf="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
+    <div *ngIf="successMessage" class="alert alert-success">{{ successMessage }}</div>
+
+    <div *ngIf="!isLoading" class="table-responsive">
+        <table class="table admin-table order-table">
+            <thead>
+                <tr>
+                    <th>رقم الطلب</th>
+                    <th>تاريخ الطلب</th>
+                    <th>العميل</th>
+                    <th>الإجمالي</th>
+                    <th>الحالة</th>
+                    <th>عدد المنتجات</th>
+                    <th>إجراءات</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let order of (orders$ | async)">
+                    <td>{{ order.orderId }}</td>
+                    <td>{{ order.orderDate | date:'yyyy/MM/dd hh:mm a' }}</td>
+                    <td>{{ order.customerUsername }} ({{order.customerId}})</td>
+                    <td>{{ order.totalAmount | currency:'JOD' }}</td>
+                    <td>
+                        <span class="badge" [ngClass]="getStatusClass(order.status)">{{ order.status }}</span>
+                    </td>
+                    <td>{{ order.items?.length || 0 }}</td>
+                    <td>
+                        <!-- Placeholder for View Details -->
+                        <button class="btn btn-sm btn-outline-info me-2" title="عرض التفاصيل">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                        <button class="btn btn-sm btn-outline-secondary" (click)="changeStatus(order)"
+                            title="تغيير الحالة">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                    </td>
+                </tr>
+                <tr *ngIf="!(orders$ | async)?.length">
+                    <td colspan="7" class="text-center text-muted">لا يوجد طلبات لعرضها.</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

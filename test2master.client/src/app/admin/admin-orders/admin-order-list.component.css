@@ -1,0 +1,42 @@
+/* Reuse shared admin list styles */
+@import '../admin-users/admin-user-list.component.css';
+
+/* Add specific styles for order list if needed */
+.order-table td {
+    /* Adjust padding or alignment if needed */
+}
+
+/* Status Badge Styles (re-defined here for clarity or override) */
+.status-pending {
+    background-color: #ffc107;
+    color: #333;
+}
+
+.status-processing {
+    background-color: #0dcaf0;
+    color: #fff;
+}
+
+.status-shipped {
+    background-color: #0d6efd;
+    color: #fff;
+}
+
+.status-delivered {
+    background-color: #198754;
+    color: #fff;
+}
+
+.status-cancelled {
+    background-color: #dc3545;
+    color: #fff;
+}
+
+.admin-table .btn-outline-info {
+    color: #0a58ca;
+}
+
+.admin-table .btn-outline-info:hover {
+    color: #0a58ca;
+    opacity: 1;
+}

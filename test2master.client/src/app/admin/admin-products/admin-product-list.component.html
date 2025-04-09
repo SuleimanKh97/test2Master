@@ -1,0 +1,62 @@
+<div class="admin-list-container" dir="rtl">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>إدارة المنتجات</h2>
+        <a routerLink="/admin-dashboard" class="btn btn-outline-secondary btn-sm">
+            <i class="fas fa-arrow-left me-1"></i> عودة إلى لوحة التحكم
+        </a>
+    </div>
+
+    <!-- Loading, Error, Success Messages -->
+    <div *ngIf="isLoading" class="loading-indicator">
+        <div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div>
+    </div>
+    <div *ngIf="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
+    <div *ngIf="successMessage" class="alert alert-success">{{ successMessage }}</div>
+
+    <!-- Optional: Add New Product Button -->
+    <!-- 
+  <div class="text-end mb-3">
+      <a routerLink="/admin/products/add" class="btn btn-primary">Add New Product</a>
+  </div>
+  -->
+
+    <div *ngIf="!isLoading" class="table-responsive">
+        <table class="table admin-table product-table">
+            <thead>
+                <tr>
+                    <th>الصورة</th>
+                    <th>الاسم</th>
+                    <th>البائع (ID)</th>
+                    <th>السعر</th>
+                    <th>الكمية</th>
+                    <th>إجراءات</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let product of (products$ | async)">
+                    <td>
+                        <img [src]="product.imageUrl || 'https://via.placeholder.com/50/eeeeee/999999?text=N/A'"
+                            alt="{{ product.name }}" class="product-thumbnail">
+                    </td>
+                    <td>{{ product.name }}</td>
+                    <td>{{ product.sellerId || 'N/A' }}</td> <!-- Show Seller ID -->
+                    <td>{{ product.price | currency:'JOD' }}</td>
+                    <td>{{ product.stockQuantity }}</td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-secondary me-2" (click)="editProduct(product.id)"
+                            title="تعديل المنتج">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn btn-sm btn-outline-danger" (click)="deleteProduct(product.id)"
+                            title="حذف المنتج">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+                <tr *ngIf="!(products$ | async)?.length">
+                    <td colspan="6" class="text-center text-muted">لا يوجد منتجات لعرضها.</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

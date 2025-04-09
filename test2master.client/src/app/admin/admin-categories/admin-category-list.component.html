@@ -1,0 +1,94 @@
+<div class="admin-list-container" dir="rtl">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>إدارة الفئات</h2>
+        <a routerLink="/admin-dashboard" class="btn btn-outline-secondary btn-sm">
+            <i class="fas fa-arrow-left me-1"></i> عودة إلى لوحة التحكم
+        </a>
+    </div>
+
+    <!-- Loading, Error, Success Messages -->
+    <div *ngIf="isLoading" class="loading-indicator">
+        <div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div>
+    </div>
+    <div *ngIf="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
+    <div *ngIf="successMessage" class="alert alert-success">{{ successMessage }}</div>
+
+    <!-- Add Category Button/Form Toggle -->
+    <div class="text-end mb-3">
+        <button class="btn btn-primary btn-sm" (click)="toggleAddForm()">
+            <i class="fas {{ showAddForm ? 'fa-times' : 'fa-plus' }}"></i> {{ showAddForm ? 'إلغاء' : 'إضافة فئة جديدة'
+            }}
+        </button>
+    </div>
+
+    <!-- Add Category Form (Inline) -->
+    <div *ngIf="showAddForm" class="add-category-form card p-3 mb-3">
+        <h5>إضافة فئة جديدة</h5>
+        <div class="mb-2">
+            <label for="newCatName" class="form-label">الاسم:</label>
+            <input type="text" id="newCatName" class="form-control form-control-sm" [(ngModel)]="newCategoryName"
+                required>
+        </div>
+        <div class="mb-2">
+            <label for="newCatDesc" class="form-label">الوصف (اختياري):</label>
+            <textarea id="newCatDesc" class="form-control form-control-sm" rows="2"
+                [(ngModel)]="newCategoryDescription"></textarea>
+        </div>
+        <div class="text-end">
+            <button class="btn btn-secondary btn-sm me-2" (click)="toggleAddForm()">إلغاء</button>
+            <button class="btn btn-success btn-sm" (click)="saveNewCategory()"
+                [disabled]="!newCategoryName">حفظ</button>
+        </div>
+    </div>
+
+    <div *ngIf="!isLoading" class="table-responsive">
+        <table class="table admin-table category-table">
+            <thead>
+                <tr>
+                    <th>الاسم</th>
+                    <th>الوصف</th>
+                    <th>إجراءات</th>
+                </tr>
+            </thead>
+            <tbody>
+                <ng-container *ngFor="let category of (categories$ | async)">
+                    <!-- Display Row -->
+                    <tr *ngIf="editingCategory?.id !== category.id">
+                        <td>{{ category.name }}</td>
+                        <td>{{ category.description }}</td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-secondary me-2" (click)="startEditing(category)"
+                                title="تعديل الفئة">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn btn-sm btn-outline-danger" (click)="deleteCategory(category.id)"
+                                title="حذف الفئة">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    <!-- Editing Row (Inline) -->
+                    <tr *ngIf="editingCategory?.id === category.id">
+                        <td><input type="text" class="form-control form-control-sm" [(ngModel)]="editingCategory.name"
+                                required></td>
+                        <td><textarea class="form-control form-control-sm" rows="1"
+                                [(ngModel)]="editingCategory.description"></textarea></td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-success me-2" (click)="saveEditedCategory()"
+                                [disabled]="!editingCategory.name" title="حفظ التعديل">
+                                <i class="fas fa-check"></i>
+                            </button>
+                            <button class="btn btn-sm btn-outline-secondary" (click)="cancelEditing()"
+                                title="إلغاء التعديل">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </td>
+                    </tr>
+                </ng-container>
+                <tr *ngIf="!(categories$ | async)?.length">
+                    <td colspan="3" class="text-center text-muted">لا يوجد فئات لعرضها.</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

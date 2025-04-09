@@ -1,0 +1,41 @@
+/* Reuse shared admin list styles */
+@import '../admin-users/admin-user-list.component.css';
+
+/* Add specific styles for category list if needed */
+.category-table td {
+    /* Adjust padding or alignment if needed */
+}
+
+.add-category-form {
+    background-color: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 6px;
+}
+
+.add-category-form h5 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+/* Styles for inline editing */
+.category-table .form-control-sm {
+    font-size: 0.9rem;
+    /* Match table cell font size */
+    padding: 0.25rem 0.5rem;
+}
+
+.category-table textarea.form-control-sm {
+    min-height: calc(1.5em + 0.5rem + 2px);
+    /* Bootstrap default, adjust if needed */
+    line-height: 1.4;
+}
+
+.admin-table .btn-outline-success {
+    color: #146c43;
+}
+
+.admin-table .btn-outline-success:hover {
+    color: #146c43;
+    opacity: 1;
+}

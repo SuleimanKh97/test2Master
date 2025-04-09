@@ -19,6 +19,10 @@ import { CheckoutComponent } from './checkout/checkout.component';
 import { SellerProductListComponent } from './seller/seller-products/seller-product-list.component';
 import { SellerProductFormComponent } from './seller/seller-products/seller-product-form.component';
 import { SellerOrderListComponent } from './seller/seller-orders/seller-order-list.component';
+import { AdminUserListComponent } from './admin/admin-users/admin-user-list.component';
+import { AdminProductListComponent } from './admin/admin-products/admin-product-list.component';
+import { AdminOrderListComponent } from './admin/admin-orders/admin-order-list.component';
+import { AdminCategoryListComponent } from './admin/admin-categories/admin-category-list.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -59,7 +63,36 @@ const routes: Routes = [
     canActivate: [AuthGuard],
     data: { roles: ['Seller'] }
   },
-  { path: 'admin-dashboard', component: AdminDashboardComponent, canActivate: [AuthGuard], data: { roles: ['Admin'] } }
+  {
+    path: 'admin-dashboard',
+    component: AdminDashboardComponent,
+    canActivate: [AuthGuard],
+    data: { roles: ['Admin'] }
+  },
+  {
+    path: 'admin/users',
+    component: AdminUserListComponent,
+    canActivate: [AuthGuard],
+    data: { roles: ['Admin'] }
+  },
+  {
+    path: 'admin/products',
+    component: AdminProductListComponent,
+    canActivate: [AuthGuard],
+    data: { roles: ['Admin'] }
+  },
+  {
+    path: 'admin/orders',
+    component: AdminOrderListComponent,
+    canActivate: [AuthGuard],
+    data: { roles: ['Admin'] }
+  },
+  {
+    path: 'admin/categories',
+    component: AdminCategoryListComponent,
+    canActivate: [AuthGuard],
+    data: { roles: ['Admin'] }
+  }
 ];
 
 @NgModule({

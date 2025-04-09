@@ -1,0 +1,89 @@
+<div class="admin-list-container" dir="rtl">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>إدارة المستخدمين</h2>
+        <a routerLink="/admin-dashboard" class="btn btn-outline-secondary btn-sm">
+            <i class="fas fa-arrow-left me-1"></i> عودة إلى لوحة التحكم
+        </a>
+    </div>
+
+    <!-- Loading, Error, Success Messages -->
+    <div *ngIf="isLoading" class="loading-indicator">
+        <div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div>
+    </div>
+    <div *ngIf="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
+    <div *ngIf="successMessage" class="alert alert-success">{{ successMessage }}</div>
+
+    <div *ngIf="!isLoading" class="table-responsive">
+        <table class="table admin-table">
+            <thead>
+                <tr>
+                    <th>اسم المستخدم</th>
+                    <th>البريد الإلكتروني</th>
+                    <th>الدور</th>
+                    <th>تاريخ الإنشاء</th>
+                    <th>إجراءات</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Use ng-container to loop without adding extra elements -->
+                <ng-container *ngFor="let user of (users$ | async)">
+                    <!-- Display Row -->
+                    <tr *ngIf="editingUser?.id !== user.id">
+                        <td>{{ user.username }}</td>
+                        <td>{{ user.email }}</td>
+                        <td><span class="badge" [ngClass]="getRoleClass(user.role)">{{ user.role }}</span></td>
+                        <td>{{ user.createdAt | date:'yyyy/MM/dd' }}</td>
+                        <td>
+                            <!-- Edit Button -->
+                            <button class="btn btn-sm btn-outline-primary me-2" (click)="startEditing(user)"
+                                title="تعديل المستخدم">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <!-- Delete Button -->
+                            <button class="btn btn-sm btn-outline-danger" (click)="deleteUser(user.id)"
+                                title="حذف المستخدم">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+
+                    <!-- Edit Row -->
+                    <tr *ngIf="editingUser?.id === user.id" class="edit-row">
+                        <td>
+                            <input type="text" class="form-control form-control-sm" [(ngModel)]="editingUser.username"
+                                placeholder="اسم المستخدم">
+                        </td>
+                        <td>
+                            <input type="email" class="form-control form-control-sm" [(ngModel)]="editingUser.email"
+                                placeholder="البريد الإلكتروني">
+                        </td>
+                        <td>
+                            <select class="form-select form-select-sm" [(ngModel)]="editingUser.role">
+                                <option *ngFor="let role of availableRoles" [value]="role">{{ role }}</option>
+                            </select>
+                        </td>
+                        <td>{{ user.createdAt | date:'yyyy/MM/dd' }} <span class="text-muted">(لا يمكن تعديله)</span>
+                        </td>
+                        <td>
+                            <!-- Save Button -->
+                            <button class="btn btn-sm btn-outline-success me-2" (click)="saveEdit()"
+                                title="حفظ التعديلات">
+                                <i class="fas fa-check"></i>
+                            </button>
+                            <!-- Cancel Button -->
+                            <button class="btn btn-sm btn-outline-secondary" (click)="cancelEdit()"
+                                title="إلغاء التعديل">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </td>
+                    </tr>
+                </ng-container>
+
+                <!-- Row for No Users -->
+                <tr *ngIf="!(users$ | async)?.length && !isLoading">
+                    <td colspan="5" class="text-center text-muted">لا يوجد مستخدمين لعرضهم.</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

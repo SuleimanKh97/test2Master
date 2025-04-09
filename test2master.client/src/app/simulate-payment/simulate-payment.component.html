@@ -1,0 +1,36 @@
+<div class="simulate-payment-container" dir="rtl">
+    <h3>محاكاة الدفع</h3>
+
+    <div *ngIf="isLoading" class="text-center">
+        <div class="spinner-border" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
+
+    <div *ngIf="errorMessage" class="alert alert-danger">
+        {{ errorMessage }}
+    </div>
+
+    <div *ngIf="!isLoading && orderId">
+        <p>أنت على وشك إتمام الدفع للطلب رقم: <strong>{{ orderId }}</strong></p>
+        <p *ngIf="amount">المبلغ: <strong>{{ amount | currency:'JOD' }}</strong></p>
+        <p>طريقة الدفع: <strong>{{ paymentMethod.includes('PayPal') ? 'باي بال (محاكاة)' : 'بطاقة (محاكاة)' }}</strong>
+        </p>
+
+        <p>اختر نتيجة محاكاة الدفع:</p>
+
+        <div class="d-grid gap-2">
+            <button class="btn btn-success btn-lg" (click)="confirmPayment(true)">
+                <i class="fas fa-check-circle me-2"></i> إتمام الدفع بنجاح
+            </button>
+            <button class="btn btn-danger btn-lg" (click)="confirmPayment(false)">
+                <i class="fas fa-times-circle me-2"></i> فشل عملية الدفع
+            </button>
+        </div>
+    </div>
+
+    <div *ngIf="!orderId && !errorMessage">
+        <p>جاري تحميل تفاصيل الطلب...</p>
+    </div>
+
+</div>

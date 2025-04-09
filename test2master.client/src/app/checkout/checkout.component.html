@@ -43,15 +43,37 @@
                     </div>
                 </label>
 
+                <!-- Simulated Card Option -->
+                <label class="payment-option" for="simulated-card">
+                    <input class="payment-option-input" type="radio" id="simulated-card" value="SimulatedCard"
+                        formControlName="paymentMethod">
+                    <div class="payment-option-content">
+                        <i class="fas fa-credit-card payment-icon"></i>
+                        <span>بطاقة إئتمان (محاكاة)</span>
+                    </div>
+                </label>
+
+                <!-- Simulated PayPal Option -->
+                <label class="payment-option" for="simulated-paypal">
+                    <input class="payment-option-input" type="radio" id="simulated-paypal" value="SimulatedPayPal"
+                        formControlName="paymentMethod">
+                    <div class="payment-option-content">
+                        <i class="fab fa-paypal payment-icon"></i>
+                        <span>باي بال (محاكاة)</span>
+                    </div>
+                </label>
+
                 <!-- PayPal Option -->
+                <!-- 
                 <label class="payment-option" for="paypal">
                     <input class="payment-option-input" type="radio" id="paypal" value="PayPal"
                         formControlName="paymentMethod">
                     <div class="payment-option-content">
-                        <i class="fab fa-paypal payment-icon"></i> <!-- Icon for PayPal -->
+                        <i class="fab fa-paypal payment-icon"></i> 
                         <span>PayPal</span>
                     </div>
                 </label>
+                -->
             </div>
 
             <!-- Add validation message if needed -->
@@ -74,8 +96,11 @@
 
         <button type="submit" class="btn btn-primary w-100" [disabled]="isLoading">
             <span *ngIf="isLoading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-            <span *ngIf="f['paymentMethod'].value === 'PayPal'">المتابعة إلى PayPal</span>
-            <span *ngIf="f['paymentMethod'].value !== 'PayPal'">تأكيد الطلب</span>
+            <span *ngIf="f['paymentMethod'].value === 'CashOnDelivery'">تأكيد الطلب</span>
+            <span
+                *ngIf="f['paymentMethod'].value === 'SimulatedCard' || f['paymentMethod'].value === 'SimulatedPayPal'">المتابعة
+                إلى الدفع</span>
+            <span *ngIf="!f['paymentMethod'].value">اختر طريقة الدفع</span>
         </button>
     </form>
 

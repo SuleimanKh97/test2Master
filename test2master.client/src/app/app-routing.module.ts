@@ -25,6 +25,7 @@ import { AdminOrderListComponent } from './admin/admin-orders/admin-order-list.c
 import { AdminCategoryListComponent } from './admin/admin-categories/admin-category-list.component';
 import { ShopComponent } from './shop/shop.component';
 import { ProductDetailComponent } from './product-detail/product-detail.component';
+import { SimulatePaymentComponent } from './simulate-payment/simulate-payment.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -40,6 +41,16 @@ const routes: Routes = [
   { path: 'profile/change-password', component: ChangePasswordComponent, canActivate: [AuthGuard] },
   { path: 'order-history', component: OrderHistoryComponent, canActivate: [AuthGuard] },
   { path: 'checkout', component: CheckoutComponent, canActivate: [AuthGuard] },
+  {
+    path: 'simulate-payment',
+    component: SimulatePaymentComponent,
+    canActivate: [AuthGuard]
+  },
+  {
+    path: 'order-confirmation',
+    component: OrderHistoryComponent,
+    canActivate: [AuthGuard]
+  },
   { path: 'buyer-dashboard', component: BuyerDashboardComponent, canActivate: [AuthGuard], data: { roles: ['Buyer'] } },
   { path: 'seller-dashboard', component: SellerDashboardComponent, canActivate: [AuthGuard], data: { roles: ['Seller'] } },
   {

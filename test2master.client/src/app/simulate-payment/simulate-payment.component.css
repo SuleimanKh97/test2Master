@@ -1,0 +1,33 @@
+.simulate-payment-container {
+    max-width: 600px;
+    margin: 2rem auto;
+    padding: 2rem;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+h3 {
+    text-align: center;
+    margin-bottom: 1.5rem;
+    color: #333;
+}
+
+p {
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+}
+
+strong {
+    color: #007bff;
+}
+
+.alert {
+    margin-top: 1rem;
+}
+
+/* Optional: Add spacing between buttons */
+.d-grid button+button {
+    margin-top: 0.5rem;
+}

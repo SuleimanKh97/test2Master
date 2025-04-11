@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { OrderService } from '../services/order.service';
+import { OrderService, CreateOrderResponse } from '../services/order.service';
 import { PaymentService } from '../services/payment.service';
 // Optional: Import CartService to display cart summary
 // import { CartService } from '../services/cart.service';
@@ -33,13 +33,18 @@ export class CheckoutComponent implements OnInit {
     ) { }
 
     ngOnInit(): void {
-        // Initialize form (add fields for address, payment etc. later)
         this.checkoutForm = this.fb.group({
-            // Example: Add dummy payment details for now
+            // Shipping Info
+            shippingPhoneNumber: ['', [
+                Validators.required,
+                Validators.pattern(/^07[789]\d{7}$/), // Basic Jordanian mobile pattern
+                Validators.maxLength(15) // Match backend
+            ]],
+            shippingAddressLine1: ['', [Validators.required, Validators.maxLength(100)]],
+            shippingAddressLine2: ['', [Validators.maxLength(100)]], // Optional
+            shippingCity: ['', [Validators.required, Validators.maxLength(50)]],
+            // Payment Info
             paymentMethod: ['CashOnDelivery', Validators.required],
-            // Add address fields later if needed
-            // addressLine1: ['', Validators.required],
-            // city: ['', Validators.required],
         });
 
         // Optional: Load cart summary if CartService is injected
@@ -54,37 +59,38 @@ export class CheckoutComponent implements OnInit {
         this.successMessage = null;
 
         if (this.checkoutForm.invalid) {
-            console.log('Form invalid');
+            console.log('Checkout form invalid:', this.checkoutForm.errors);
+            // Optionally scroll to the first invalid field
             return;
         }
 
         this.isLoading = true;
-        const selectedPaymentMethod = this.checkoutForm.value.paymentMethod;
-        console.log('Selected Payment Method:', selectedPaymentMethod);
+        // Extract all form values, including shipping info
+        const orderData = this.checkoutForm.value;
+        console.log('Submitting Order Data:', orderData);
 
-        // Call OrderService to create the initial order entry
-        this.orderService.createOrder(selectedPaymentMethod).subscribe({
-            next: (response) => {
+        // Pass the whole form value object to createOrder
+        // OrderService needs to be updated to accept this structure
+        this.orderService.createOrder(orderData).subscribe({
+            next: (response: CreateOrderResponse) => { // Use the defined response type
                 console.log('Create Order Response:', response);
 
                 if (response.requiresPayment && response.primaryOrderId) {
-                    // Payment simulation is needed, initiate it
                     console.log('Order requires payment, initiating simulation...');
                     this.initiateSimulation(response.primaryOrderId);
                 } else {
-                    // Order created directly (e.g., COD), show success
                     this.isLoading = false;
                     this.successMessage = response.message || "تم إرسال طلبك بنجاح!";
                     console.log('Order created directly (COD):', response);
-                    this.checkoutForm.reset();
+                    this.checkoutForm.reset(); // Reset the form after success
                     this.submitted = false;
-                    // Redirect to order history or confirmation page
+                    // Redirect or show confirmation
                     setTimeout(() => {
                         this.router.navigate(['/order-history']);
                     }, 2000);
                 }
             },
-            error: (err) => {
+            error: (err: Error) => {
                 this.isLoading = false;
                 this.errorMessage = err?.message || 'فشل إنشاء الطلب. يرجى المحاولة مرة أخرى.';
                 console.error('Create Order failed:', err);

@@ -16,53 +16,78 @@
     <!-- Order Items Table -->
     <div *ngIf="(orderItems$ | async) as items; else noItems">
         <div *ngIf="items.length > 0; else noItems">
-            <table class="table table-striped table-hover align-middle">
-                <thead>
-                    <tr>
-                        <th>رقم الطلب</th>
-                        <th>تاريخ الطلب</th>
-                        <th>صورة المنتج</th>
-                        <th>اسم المنتج</th>
-                        <th>الكمية</th>
-                        <th>السعر (للقطعة)</th>
-                        <th>حالة الطلب</th>
-                        <th>إجراءات</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr *ngFor="let item of items">
-                        <td>{{ item.orderId }}</td>
-                        <td>{{ item.orderDate | date:'yyyy/MM/dd hh:mm a' }}</td>
-                        <td>
-                            <img [src]="item.imageUrl || 'assets/placeholder-image.png'" alt="{{ item.productName }}"
-                                width="50" class="rounded">
-                        </td>
-                        <td>{{ item.productName }}</td>
-                        <td>{{ item.quantity }}</td>
-                        <td>{{ item.pricePerItem | currency:'ILS' }}</td>
-                        <td>
-                            <span [ngClass]="getStatusClass(item.orderStatus)">{{ getStatusTranslation(item.orderStatus)
-                                }}</span>
-                        </td>
-                        <td>
-                            <!-- Seller Actions based on Current Status -->
-                            <div class="btn-group" role="group">
-                                <!-- Cancel (if Pending) -->
+            <div class="accordion" id="sellerOrderAccordion">
+                <div class="accordion-item mb-2" *ngFor="let item of items; let i = index">
+                    <h2 class="accordion-header" [id]="'headingSellerOrder' + i">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                            [attr.data-bs-target]="'#collapseSellerOrder' + i" aria-expanded="false"
+                            [attr.aria-controls]="'collapseSellerOrder' + i">
+                            <div class="d-flex w-100 justify-content-between align-items-center flex-wrap">
+                                <!-- Existing header info: Order ID, Date, Product, Status -->
+                                <span class="me-3">طلب #{{ item.orderId }}</span>
+                                <span class="me-3 text-muted"><i class="fas fa-calendar-alt me-1"></i> {{ item.orderDate
+                                    | date:'yyyy/MM/dd' }}</span>
+                                <span class="me-3"><i class="fas fa-box me-1"></i> {{ item.productName }} (x{{
+                                    item.quantity }})</span>
+                                <span class="badge rounded-pill" [ngClass]="getStatusClass(item.orderStatus)">
+                                    {{ getStatusTranslation(item.orderStatus) }}
+                                </span>
+                            </div>
+                        </button>
+                    </h2>
+                    <div [id]="'collapseSellerOrder' + i" class="accordion-collapse collapse"
+                        [attr.aria-labelledby]="'headingSellerOrder' + i" data-bs-parent="#sellerOrderAccordion">
+                        <div class="accordion-body">
+                            <div class="row">
+                                <!-- Product/Item Details -->
+                                <div class="col-md-6">
+                                    <h5>تفاصيل المنتج</h5>
+                                    <div class="d-flex align-items-center mb-3">
+                                        <img [src]="item.imageUrl || 'assets/placeholder-image.png'"
+                                            alt="{{ item.productName }}" width="60" height="60"
+                                            class="me-3 rounded object-fit-cover">
+                                        <div>
+                                            <div><strong>{{ item.productName }}</strong> (#{{ item.productId }})</div>
+                                            <div>الكمية: {{ item.quantity }}</div>
+                                            <div>سعر القطعة: {{ item.pricePerItem | currency:'JOD' }}</div>
+                                            <div>الإجمالي للمنتج: {{ (item.quantity * item.pricePerItem) |
+                                                currency:'JOD' }}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Buyer and Shipping Details -->
+                                <div class="col-md-6">
+                                    <h5>معلومات المشتري والشحن</h5>
+                                    <ul class="list-unstyled">
+                                        <li><strong>المشتري:</strong> {{ item.buyerUsername || 'غير متوفر' }}</li>
+                                        <li><strong>رقم الهاتف:</strong> <a
+                                                [href]="'tel:' + item.shippingPhoneNumber">{{ item.shippingPhoneNumber
+                                                || 'غير متوفر' }}</a></li>
+                                        <li><strong>العنوان:</strong> {{ item.shippingAddressLine1 || 'غير متوفر' }}
+                                        </li>
+                                        <li *ngIf="item.shippingAddressLine2">{{ item.shippingAddressLine2 }}</li>
+                                        <li><strong>المدينة:</strong> {{ item.shippingCity || 'غير متوفر' }}</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <hr>
+                            <!-- Action Buttons -->
+                            <div class="action-buttons mt-2">
                                 <button *ngIf="item.orderStatus?.toLowerCase() === 'pending'"
-                                    class="btn btn-sm btn-danger" (click)="updateStatus(item.orderId, 'Cancelled')">
-                                    إلغاء
+                                    class="btn btn-sm btn-outline-danger"
+                                    (click)="updateStatus(item.orderId, 'Cancelled')">
+                                    <i class="fas fa-times me-1"></i> إلغاء
                                 </button>
-                                <!-- Mark as Shipped (if Processing) -->
                                 <button *ngIf="item.orderStatus?.toLowerCase() === 'processing'"
                                     class="btn btn-sm btn-success" (click)="updateStatus(item.orderId, 'Shipped')">
-                                    تم الشحن
+                                    <i class="fas fa-truck me-1"></i> تم الشحن
                                 </button>
-                                <!-- Add other actions if needed (e.g., Print Invoice) -->
+                                <!-- Add other action buttons if needed -->
                             </div>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 

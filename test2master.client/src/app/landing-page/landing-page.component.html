@@ -1,0 +1,134 @@
+<div class="landing-container">
+    <!-- Hero Section with Carousel -->
+    <section class="hero-section-carousel">
+        <div id="landingPageCarousel" class="carousel slide carousel-fade" data-bs-ride="carousel">
+            <div class="carousel-indicators">
+                <button type="button" data-bs-target="#landingPageCarousel" data-bs-slide-to="0" class="active"
+                    aria-current="true" aria-label="Slide 1"></button>
+                <button type="button" data-bs-target="#landingPageCarousel" data-bs-slide-to="1"
+                    aria-label="Slide 2"></button>
+                <button type="button" data-bs-target="#landingPageCarousel" data-bs-slide-to="2"
+                    aria-label="Slide 3"></button>
+            </div>
+            <div class="carousel-inner">
+                <!-- Slide 1 -->
+                <div class="carousel-item active" data-bs-interval="5000">
+                    <img src="/assets/images/slider-1.jpg" class="d-block w-100" alt="Slide 1 Image">
+                    <div class="carousel-caption d-none d-md-block text-center">
+                        <h1 class="display-3 fw-bold mb-3 animated fadeInDown">مستقبل التسوق والبيع بين يديك</h1>
+                        <p class="lead mb-4 animated fadeInUp">اكتشف منتجات فريدة أو ابدأ ببيع منتجاتك بسهولة وأمان.</p>
+                        <a routerLink="/shop" class="btn btn-primary btn-lg me-2 animated zoomIn">تصفح المنتجات</a>
+                        <a routerLink="/signup" class="btn btn-outline-light btn-lg animated zoomIn">ابدأ البيع الآن</a>
+                    </div>
+                </div>
+                <!-- Slide 2 -->
+                <div class="carousel-item" data-bs-interval="5000">
+                    <img src="/assets/images/slider-2.jpg" class="d-block w-100" alt="Slide 2 Image">
+                    <div class="carousel-caption d-none d-md-block text-center">
+                        <h1 class="display-4 fw-bold mb-3 animated fadeInDown">منصة متكاملة للبائعين</h1>
+                        <p class="lead mb-4 animated fadeInUp">أدوات قوية لإدارة منتجاتك وطلباتك وزيادة مبيعاتك.</p>
+                        <a routerLink="/signup" class="btn btn-success btn-lg animated zoomIn">انضم كبائع</a>
+                    </div>
+                </div>
+                <!-- Slide 3 -->
+                <div class="carousel-item" data-bs-interval="5000">
+                    <img src="/assets/images/slider-3.jpg" class="d-block w-100" alt="Slide 3 Image">
+                    <div class="carousel-caption d-none d-md-block text-center">
+                        <h1 class="display-4 fw-bold mb-3 animated fadeInDown">تجربة تسوق آمنة وممتعة</h1>
+                        <p class="lead mb-4 animated fadeInUp">آلاف المنتجات بانتظارك مع حماية كاملة لعمليات الشراء.</p>
+                        <a routerLink="/shop" class="btn btn-info btn-lg animated zoomIn">تسوق الآن</a>
+                    </div>
+                </div>
+            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#landingPageCarousel"
+                data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#landingPageCarousel"
+                data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+            </button>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features-section py-5">
+        <div class="container">
+            <h2 class="text-center mb-5">لماذا تختار منصتنا؟</h2>
+            <div class="row text-center g-4">
+                <!-- Feature 1 -->
+                <div class="col-md-4">
+                    <div class="feature-card p-4 shadow-sm">
+                        <div class="feature-icon mb-3">
+                            <i class="fas fa-store fa-3x"></i>
+                        </div>
+                        <h4>ملايين المنتجات</h4>
+                        <p>تصفح مجموعة واسعة ومتنوعة من المنتجات من مختلف البائعين.</p>
+                    </div>
+                </div>
+                <!-- Feature 2 -->
+                <div class="col-md-4">
+                    <div class="feature-card p-4 shadow-sm">
+                        <div class="feature-icon mb-3">
+                            <i class="fas fa-rocket fa-3x"></i>
+                        </div>
+                        <h4>سهولة البيع</h4>
+                        <p>ابدأ ببيع منتجاتك خلال دقائق مع أدوات بسيطة وفعالة.</p>
+                    </div>
+                </div>
+                <!-- Feature 3 -->
+                <div class="col-md-4">
+                    <div class="feature-card p-4 shadow-sm">
+                        <div class="feature-icon mb-3">
+                            <i class="fas fa-shield-alt fa-3x"></i>
+                        </div>
+                        <h4>أمان وموثوقية</h4>
+                        <p>تسوق أو بع بثقة مع نظام آمن وحماية للمشترين والبائعين.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How it Works Section (Optional) -->
+    <section class="how-it-works-section py-5 bg-light">
+        <div class="container">
+            <h2 class="text-center mb-5">كيف تعمل المنصة؟</h2>
+            <div class="row text-center g-4">
+                <div class="col-md-4">
+                    <div class="step-card p-3">
+                        <div class="step-number mb-2">1</div>
+                        <h5>اكتشف أو اعرض</h5>
+                        <p>تصفح المنتجات أو قم بإضافة منتجك الخاص للبيع.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="step-card p-3">
+                        <div class="step-number mb-2">2</div>
+                        <h5>تواصل أو اشترِ</h5>
+                        <p>تواصل مع البائع أو قم بالشراء مباشرة بأمان.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="step-card p-3">
+                        <div class="step-number mb-2">3</div>
+                        <h5>استلم أو تابع</h5>
+                        <p>استلم طلبك أو تابع مبيعاتك وأرباحك بسهولة.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Final CTA Section -->
+    <section class="cta-section text-center py-5">
+        <div class="container">
+            <h2 class="mb-3">جاهز لتبدأ؟</h2>
+            <p class="lead mb-4">انضم إلى مجتمعنا المتنامي من المشترين والبائعين اليوم!</p>
+            <a routerLink="/signup" class="btn btn-success btn-lg">إنشاء حساب جديد</a>
+        </div>
+    </section>
+
+</div>

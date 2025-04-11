@@ -27,8 +27,53 @@
   -->
 
     <form [formGroup]="checkoutForm" (ngSubmit)="onSubmit()" *ngIf="!successMessage"> <!-- Hide form on success -->
-        <h4>تفاصيل الدفع والشحن</h4>
+        <h4>تفاصيل الشحن</h4>
 
+        <!-- Shipping Phone Number -->
+        <div class="mb-3">
+            <label for="shippingPhoneNumber" class="form-label">رقم الهاتف</label>
+            <input type="tel" id="shippingPhoneNumber" formControlName="shippingPhoneNumber" class="form-control"
+                placeholder="مثال: 07xxxxxxxx"
+                [ngClass]="{ 'is-invalid': submitted && f['shippingPhoneNumber'].errors }">
+            <div *ngIf="submitted && f['shippingPhoneNumber'].errors" class="invalid-feedback">
+                <div *ngIf="f['shippingPhoneNumber'].errors['required']">رقم الهاتف مطلوب.</div>
+                <div *ngIf="f['shippingPhoneNumber'].errors['pattern']">الرجاء إدخال رقم هاتف أردني صالح.</div>
+                <div *ngIf="f['shippingPhoneNumber'].errors['maxlength']">رقم الهاتف طويل جداً.</div>
+            </div>
+        </div>
+
+        <!-- Shipping Address Line 1 -->
+        <div class="mb-3">
+            <label for="shippingAddressLine1" class="form-label">العنوان (السطر الأول)</label>
+            <input type="text" id="shippingAddressLine1" formControlName="shippingAddressLine1" class="form-control"
+                placeholder="اسم الشارع، رقم المبنى، الطابق، الشقة"
+                [ngClass]="{ 'is-invalid': submitted && f['shippingAddressLine1'].errors }">
+            <div *ngIf="submitted && f['shippingAddressLine1'].errors" class="invalid-feedback">
+                <div *ngIf="f['shippingAddressLine1'].errors['required']">العنوان مطلوب.</div>
+            </div>
+        </div>
+
+        <!-- Shipping Address Line 2 (Optional) -->
+        <div class="mb-3">
+            <label for="shippingAddressLine2" class="form-label">العنوان (السطر الثاني - اختياري)</label>
+            <input type="text" id="shippingAddressLine2" formControlName="shippingAddressLine2" class="form-control"
+                placeholder="علامة مميزة، اسم العمارة، إلخ.">
+        </div>
+
+        <!-- Shipping City -->
+        <div class="mb-3">
+            <label for="shippingCity" class="form-label">المدينة / المحافظة</label>
+            <input type="text" id="shippingCity" formControlName="shippingCity" class="form-control"
+                placeholder="مثال: عمان، إربد، الزرقاء"
+                [ngClass]="{ 'is-invalid': submitted && f['shippingCity'].errors }">
+            <div *ngIf="submitted && f['shippingCity'].errors" class="invalid-feedback">
+                <div *ngIf="f['shippingCity'].errors['required']">المدينة مطلوبة.</div>
+            </div>
+        </div>
+
+        <hr class="my-4">
+
+        <h4>طريقة الدفع</h4>
         <!-- Payment Method -->
         <div class="mb-3">
             <label class="form-label d-block mb-2">طريقة الدفع</label>

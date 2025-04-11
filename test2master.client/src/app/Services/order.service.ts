@@ -21,13 +21,23 @@ export interface OrderDetailDTO {
     // Add other relevant fields like shipping address etc. if needed
 }
 
-// Original response interface for createOrder
-interface CreateOrderResponse {
+// Request DTO for creating an order (matches backend CreateOrderRequestDTO)
+export interface CreateOrderRequest {
+    paymentMethod: string;
+    shippingPhoneNumber: string;
+    shippingAddressLine1: string;
+    shippingAddressLine2?: string;
+    shippingCity: string;
+}
+
+// Response DTO for create order (already defined)
+export interface CreateOrderResponse {
     message: string;
     orderIds: number[];
     requiresPayment: boolean;
-    primaryOrderId?: number; // Order ID to use for initiating payment simulation
+    primaryOrderId?: number;
 }
+
 // -----------------------------
 
 @Injectable({
@@ -40,18 +50,16 @@ export class OrderService {
     constructor(private http: HttpClient) { }
 
     /**
-     * Creates a new order(s) based on the current user's cart and selected payment method.
-     * Handles both COD and initiating payment simulation flows.
-     * @param paymentMethod The selected payment method (e.g., 'CashOnDelivery', 'SimulatedCard')
+     * Creates a new order(s) with shipping information.
+     * @param orderData Object containing paymentMethod and shipping details.
      * @returns Observable containing the result of the order creation attempt.
      */
-    createOrder(paymentMethod: string): Observable<CreateOrderResponse> {
-        console.log('Creating order with payment method:', paymentMethod);
-        const body = { paymentMethod };
-        // Base URL already includes /Order, so just post to baseUrl
-        return this.http.post<CreateOrderResponse>(this.baseUrl, body)
+    createOrder(orderData: CreateOrderRequest): Observable<CreateOrderResponse> {
+        console.log('OrderService: Sending order data:', orderData);
+        // The body now contains the complete orderData object
+        return this.http.post<CreateOrderResponse>(this.baseUrl, orderData)
             .pipe(
-                catchError(this.handleError) // Reuse or define a specific error handler
+                catchError(this.handleError)
             );
     }
 

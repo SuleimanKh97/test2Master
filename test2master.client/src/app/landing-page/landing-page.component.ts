@@ -1,6 +1,10 @@
-import { Component, OnInit, AfterViewInit, ElementRef, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, AfterViewInit, ElementRef, Renderer2, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { Subscription } from 'rxjs';
+import { AuthService } from '../Services/auth/auth.service'; // Import AuthService
+import { BlogService } from '../Services/blog/blog.service'; // Import BlogService
+import { BlogPostSummaryDTO } from '../Interfaces/blog.interface'; // Import DTO
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router'; // Import RouterModule for routerLink
+import { RouterModule } from '@angular/router';
 
 @Component({
     selector: 'app-landing-page',
@@ -10,16 +14,39 @@ import { RouterModule } from '@angular/router'; // Import RouterModule for route
     styleUrls: ['./landing-page.component.css'],
     changeDetection: ChangeDetectionStrategy.OnPush // Optimize change detection
 })
-export class LandingPageComponent implements OnInit, AfterViewInit, OnDestroy {
+export class LandingPageComponent implements OnInit, OnDestroy, AfterViewInit {
 
+    // --- Properties --- //
     private observer: IntersectionObserver | undefined;
+    private authSubscription: Subscription | null = null;
+    private blogSubscription: Subscription | null = null;
 
-    // Inject ElementRef to get access to the component's host element
-    // Inject ChangeDetectorRef if using OnPush
-    constructor(private elementRef: ElementRef, private cdr: ChangeDetectorRef) { }
+    // ** Make properties public to be accessible in the template **
+    public currentUserRole: string | null = null;
+    public latestPosts: BlogPostSummaryDTO[] = [];
+    public currentYear = new Date().getFullYear(); // For footer copyright
 
+    // --- Constructor --- //
+    constructor(
+        private elementRef: ElementRef,
+        private authService: AuthService, // Inject AuthService
+        private blogService: BlogService, // Inject BlogService
+        private cdr: ChangeDetectorRef,
+        // Keep Renderer2 if needed by observer logic, otherwise remove
+        private renderer: Renderer2
+    ) { }
+
+    // --- Lifecycle Hooks --- //
     ngOnInit(): void {
-        // Initialization logic if needed
+        // Subscribe to user changes
+        this.authSubscription = this.authService.currentUser$.subscribe(user => {
+            this.currentUserRole = user ? user.role : null;
+            console.log('Landing Page: User role updated:', this.currentUserRole);
+            this.cdr.markForCheck(); // Trigger change detection
+        });
+
+        // Fetch latest blog posts
+        this.fetchLatestPosts();
     }
 
     ngAfterViewInit(): void {
@@ -27,38 +54,53 @@ export class LandingPageComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     ngOnDestroy(): void {
-        // Disconnect the observer when the component is destroyed
         if (this.observer) {
             this.observer.disconnect();
         }
+        if (this.authSubscription) {
+            this.authSubscription.unsubscribe();
+        }
+        if (this.blogSubscription) {
+            this.blogSubscription.unsubscribe();
+        }
     }
 
+    // --- Methods --- //
+    private fetchLatestPosts(): void {
+        this.blogSubscription = this.blogService.getBlogPosts(3).subscribe({
+            next: (posts: BlogPostSummaryDTO[]) => {
+                this.latestPosts = posts;
+                console.log('Landing Page: Fetched posts:', posts);
+                this.cdr.markForCheck(); // Trigger change detection
+            },
+            error: (err: any) => {
+                console.error('Landing Page: Error fetching blog posts:', err);
+            }
+        });
+    }
+
+    // Keep existing Intersection Observer setup logic
     private initializeObserver(): void {
         const options = {
-            root: null, // Use the viewport as the root
-            rootMargin: '0px',
-            threshold: 0.1 // Trigger when 10% of the element is visible
+            root: null,
+            threshold: 0.1,
+            rootMargin: "0px"
         };
 
         this.observer = new IntersectionObserver((entries, observer) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
-                    // Add the 'is-visible' class to the element
-                    entry.target.classList.add('is-visible');
-                    // Optional: Unobserve the element after it has become visible
-                    // observer.unobserve(entry.target);
-                    this.cdr.markForCheck(); // Trigger change detection if needed with OnPush
+                    // Add class using Renderer2 for better abstraction (optional)
+                    this.renderer.addClass(entry.target, 'is-visible');
+                    // entry.target.classList.add('is-visible');
+                    this.cdr.markForCheck();
+                    observer.unobserve(entry.target); // Animate only once
                 }
-                // Optional: Remove class if element scrolls out of view
-                // else { 
-                //   entry.target.classList.remove('is-visible');
-                // } 
             });
         }, options);
 
-        // Select all elements you want to animate on scroll
         const elementsToObserve = this.elementRef.nativeElement.querySelectorAll(
-            '.features-section .feature-card, .how-it-works-section .step-card, .cta-section h2, .cta-section p, .cta-section .btn'
+            '.features-section .feature-card, .how-it-works-section .step-card, .cta-section h2, .cta-section p, .cta-section .btn, .blog-card' // Observe blog cards too
         );
         elementsToObserve.forEach((el: Element) => {
             if (this.observer) {

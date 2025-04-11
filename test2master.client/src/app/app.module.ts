@@ -22,6 +22,8 @@ import { EditProfileComponent } from './user/edit-profile/edit-profile.component
 import { ChangePasswordComponent } from './user/change-password/change-password.component';
 import { OrderHistoryComponent } from './user/order-history/order-history.component';
 import { CheckoutComponent } from './checkout/checkout.component';
+import { AdminBlogListComponent } from './admin/admin-blog-list/admin-blog-list.component';
+import { AdminBlogPostFormComponent } from './admin/admin-blog-post-form/admin-blog-post-form.component';
 
 
 @NgModule({
@@ -34,10 +36,15 @@ import { CheckoutComponent } from './checkout/checkout.component';
     LoginComponent,
     ProfileComponent,
     AdminDashboardComponent,
+    AdminBlogListComponent,
+    AdminBlogPostFormComponent,
   ],
   imports: [
     BrowserModule, HttpClientModule,
     AppRoutingModule, FormsModule, ReactiveFormsModule,
+    AppComponent,
+    HeaderComponent,
+    FooterComponent,
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: TokenInterceptor, multi: true }

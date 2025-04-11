@@ -112,8 +112,8 @@
 
 /* Features Section */
 .features-section {
-    background-color: #f8f9fa;
-    /* Light background for contrast */
+    /* background-color: #f8f9fa; */
+    /* Keep light background */
 }
 
 .feature-card {
@@ -121,7 +121,8 @@
     border-radius: 8px;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     height: 100%;
-    /* Ensure cards have same height */
+    border: none;
+    /* Remove default border */
 }
 
 .feature-card:hover {
@@ -130,35 +131,50 @@
 }
 
 .feature-icon i {
-    color: var(--bs-primary);
-    /* Use Bootstrap primary color */
+    /* color: var(--bs-primary); */
+    /* Color will be set in HTML */
 }
 
 /* How It Works Section */
-.step-card {
+.how-it-works-section {
     background-color: #fff;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-    height: 100%;
+    /* Changed background */
 }
 
-.step-number {
-    background-color: var(--bs-primary);
-    color: white;
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.2rem;
-    font-weight: bold;
+.step-card {
+    /* background-color: #fff; */
+    /* Removed background color */
+    border-radius: 8px;
+    /* box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05); */
+    /* Removed shadow */
+    height: 100%;
+    border: none;
+    /* Remove default border */
+    transition: transform 0.3s ease;
 }
+
+.step-card:hover {
+    transform: scale(1.03);
+}
+
+.step-icon {
+    color: var(--primary-color, #4CAF50);
+    margin-bottom: 1rem;
+}
+
+.step-icon i {
+    /* Size controlled in HTML */
+}
+
+/* .step-number { ... keep if using old style ... } */
 
 /* CTA Section */
 .cta-section {
-    background-color: #e9ecef;
-    /* Slightly different background */
+    /* background-color: #e9ecef; */
+    /* Will use bg-success class */
+    background-size: cover;
+    /* Optional background image */
+    background-position: center;
 }
 
 /* --- Scroll Animation Setup --- */
@@ -182,7 +198,6 @@
 }
 
 /* ----------------------------- */
-
 /* Responsive adjustments */
 @media (max-width: 768px) {
     .hero-section-carousel .carousel-caption h1 {

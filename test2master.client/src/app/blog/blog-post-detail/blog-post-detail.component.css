@@ -1,0 +1,88 @@
+.blog-post-detail-container {
+    max-width: 900px;
+}
+
+figure img {
+    max-height: 450px;
+    object-fit: cover;
+    width: 100%;
+}
+
+/* Basic styling for content potentially coming from a rich text editor */
+.blog-content h1,
+.blog-content h2,
+.blog-content h3,
+.blog-content h4,
+.blog-content h5,
+.blog-content h6 {
+    font-weight: bold;
+    margin-top: 1.8em;
+    margin-bottom: 1em;
+    line-height: 1.4;
+    color: #333;
+}
+
+.blog-content p {
+    line-height: 1.9;
+    margin-bottom: 1.4rem;
+    color: #444;
+}
+
+.blog-content a {
+    color: var(--bs-success, #198754);
+    text-decoration: underline;
+    text-decoration-color: rgba(25, 135, 84, 0.5);
+    transition: text-decoration-color 0.2s ease;
+}
+
+.blog-content a:hover {
+    text-decoration-color: rgba(25, 135, 84, 1);
+}
+
+.blog-content ul,
+.blog-content ol {
+    padding-right: 2rem;
+    /* Adjust padding for RTL */
+    margin-bottom: 1.4rem;
+    line-height: 1.8;
+}
+
+.blog-content blockquote {
+    border-right: 4px solid #e9ecef;
+    padding-right: 1.5rem;
+    margin-right: 0;
+    padding-left: 0;
+    margin-left: 0;
+    margin-top: 1.5rem;
+    margin-bottom: 1.5rem;
+    color: #555;
+    font-style: italic;
+    font-size: 1.1rem;
+}
+
+.blog-content img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 5px;
+    margin: 1.5rem 0;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.blog-content pre {
+    background-color: #f8f9fa;
+    padding: 1rem;
+    border-radius: 5px;
+    overflow-x: auto;
+    margin-bottom: 1.4rem;
+}
+
+.blog-content code {
+    font-family: monospace;
+    font-size: 0.95em;
+}
+
+.blog-content hr {
+    margin: 2.5rem 0;
+}
+
+/* Add more specific styles as needed based on your content structure */

@@ -65,10 +65,57 @@ header {
   }
 }
 
+/* --- Cart Preview --- */
+.cart-icon-container {
+  /* Container for icon and preview */
+}
+
 .cart-preview {
   position: absolute;
   top: 100%;
-  right: 0;
-  width: 300px;
-  z-index: 9999;
+  /* Position below the header item */
+  left: 0;
+  /* Align to the left edge of the parent li (adjust if needed) */
+  /* Or use right: 0; if you prefer alignment to the right */
+  min-width: 320px;
+  /* Minimum width */
+  max-width: 350px;
+  z-index: 1021;
+  /* Ensure it's above header content but below potential modals */
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(10px);
+  /* Start slightly lower */
+  transition: opacity 0.2s ease-in-out, visibility 0.2s ease-in-out, transform 0.2s ease-in-out;
+  pointer-events: none;
+  /* Initially ignore mouse events */
+  background-color: #fff;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.cart-icon-container:hover .cart-preview,
+.cart-preview:hover {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+  pointer-events: auto;
+  /* Allow interaction when visible */
+}
+
+.cart-preview-item {
+  /* Style individual items */
+}
+
+.cart-preview-img {
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+}
+
+/* Adjustments for mobile if needed */
+@media (max-width: 991.98px) {
+  .cart-preview {
+    /* Hide preview on mobile, or adjust positioning/display */
+    display: none;
+  }
 }

@@ -4,11 +4,136 @@
     text-align: center;
 }
 
-th, td {
+th,
+td {
     padding-left: 1rem;
     padding-right: 1rem;
 }
 
 table {
     margin: 0 auto;
+}
+
+/* Chatbot Floating Action Button (FAB) */
+.chatbot-fab {
+    position: fixed;
+    bottom: 25px;
+    right: 25px;
+    /* Adjust for RTL if needed, Bootstrap might handle this */
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background-color: var(--bs-success);
+    /* Use theme color */
+    color: white;
+    border: none;
+    font-size: 24px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    z-index: 1050;
+    /* Ensure it's above most content but below modals */
+    transition: transform 0.2s ease-in-out, background-color 0.2s ease;
+}
+
+.chatbot-fab:hover {
+    transform: scale(1.1);
+    background-color: darkgreen;
+    /* Darken on hover */
+}
+
+/* Chatbot Popup Window */
+.chatbot-popup {
+    position: fixed;
+    bottom: 100px;
+    /* Position above the FAB */
+    right: 25px;
+    /* Align with the FAB */
+    width: 380px;
+    /* Adjust width as needed */
+    max-width: 90vw;
+    height: 550px;
+    /* Adjust height as needed */
+    max-height: 70vh;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    z-index: 1040;
+    /* Below FAB when closed, potentially adjust if needed */
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    /* Start hidden - handled by *ngIf, but could add animation classes */
+    /* transform: translateY(20px) scale(0.95); */
+    /* opacity: 0; */
+}
+
+/* Add animation for showing popup */
+/* Could use ng-animate or simple transition with *ngIf */
+
+.chatbot-popup-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    background-color: #f8f9fa;
+    /* Light header background */
+    border-bottom: 1px solid #dee2e6;
+}
+
+.chatbot-popup-header h5 {
+    margin-bottom: 0;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.chatbot-popup-content {
+    flex-grow: 1;
+    overflow-y: auto;
+    /* Allow content (chatbot component) to scroll */
+    /* The chatbot component itself will handle internal padding/scrolling */
+}
+
+/* Override chatbot component styles slightly for popup context */
+.chatbot-popup .chatbot-container {
+    max-width: 100%;
+    margin: 0;
+    padding: 0;
+    /* Let the popup manage padding */
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+    height: 100%;
+    /* Fill the popup content area */
+    display: flex;
+    /* Ensure flex works */
+    flex-direction: column;
+    /* Ensure flex works */
+}
+
+.chatbot-popup .message-area {
+    flex-grow: 1;
+    /* Make message area fill available space */
+    height: auto;
+    /* Override fixed height */
+    border: none;
+    /* Remove internal border */
+    padding: 1rem;
+    /* Add padding here */
+    background-color: #fff;
+}
+
+.chatbot-popup .input-area {
+    padding: 0.75rem;
+    /* Add padding to input area */
+    border-top: 1px solid #e0e0e0;
+    background-color: #f9f9f9;
+}
+
+/* Hide the API key warning inside the popup */
+.chatbot-popup .alert-warning {
+    display: none;
 }

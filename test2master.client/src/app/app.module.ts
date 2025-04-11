@@ -11,7 +11,6 @@ import { FooterComponent } from './Shared/footer/footer.component';
 import { ProductListComponent } from './Product/product-list/product-list.component';
 import { ProductDetailsComponent } from './Product/product-details/product-details.component';
 import { ContactComponent } from './contact/contact.component';
-import { CartComponent } from './cart/cart.component';
 import { LoginComponent } from './auth/login/login.component';
 import { RegisterComponent } from './auth/register/register.component';
 import { ProfileComponent } from './user/profile/profile.component';
@@ -32,7 +31,6 @@ import { AdminBlogPostFormComponent } from './admin/admin-blog-post-form/admin-b
     ProductListComponent,
     ProductDetailsComponent,
     ContactComponent,
-    CartComponent,
     LoginComponent,
     ProfileComponent,
     AdminDashboardComponent,

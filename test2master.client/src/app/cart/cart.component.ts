@@ -1,10 +1,17 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { map, Observable, Subscription } from 'rxjs';
-import { CartItem, CartService } from '../Services/cart/cart.service';
+import { CartService } from '../Services/cart/cart.service';
+import { CartItem } from '../Interfaces/cart.interface';
+import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-cart',
-  standalone: false,
+  standalone: true,
+  imports: [
+    CommonModule,
+    RouterModule
+  ],
   templateUrl: './cart.component.html',
   styleUrl: './cart.component.css'
 })
@@ -25,10 +32,13 @@ export class CartComponent implements OnInit, OnDestroy {
     this.subscriptions.unsubscribe();
   }
 
-  onQuantityChange(productId: number, value: string): void {
+  onQuantityChange(productId: number, event: Event): void {
     this.errorMessage = null;
+    const inputElement = event.target as HTMLInputElement;
+    const value = inputElement.value;
     const quantity = Number(value);
-    if (!isNaN(quantity)) {
+
+    if (inputElement && !isNaN(quantity)) {
       const sub = this.cartService.updateQuantity(productId, quantity).subscribe({
         error: (err) => {
           console.error('Error updating quantity:', err);
@@ -37,7 +47,7 @@ export class CartComponent implements OnInit, OnDestroy {
       });
       this.subscriptions.add(sub);
     } else {
-      console.warn('Invalid quantity input:', value);
+      console.warn('Invalid quantity input or event target:', value);
     }
   }
 

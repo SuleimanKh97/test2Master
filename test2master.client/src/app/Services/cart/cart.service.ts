@@ -2,12 +2,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, throwError, of } from 'rxjs';
 import { map, catchError, tap, switchMap } from 'rxjs/operators';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { Product } from '../../Models/product.module';
-
-export interface CartItem {
-  product: Product;
-  quantity: number;
-}
+import { CartItem } from '../../Interfaces/cart.interface';
 
 interface CartItemResponseDTO {
   productId: number;
@@ -71,7 +66,7 @@ export class CartService {
     );
   }
 
-  addToCart(product: Product, quantity = 1): Observable<CartItem[]> {
+  addToCart(product: { id: number }, quantity = 1): Observable<CartItem[]> {
     console.log(`CartService: Adding product ${product.id} with quantity ${quantity} to server cart...`);
     const request: AddItemToCartRequestDTO = {
       productId: product.id,
@@ -115,16 +110,11 @@ export class CartService {
 
   private mapDtosToCartItems(dtos: CartItemResponseDTO[]): CartItem[] {
     return dtos.map(dto => ({
+      productId: dto.productId,
+      productName: dto.productName,
+      price: dto.price,
       quantity: dto.quantity,
-      product: {
-        id: dto.productId,
-        name: dto.productName,
-        price: dto.price,
-        imageUrl: dto.imageUrl || '',
-        description: '',
-        category: 'Unknown',
-        originalPrice: dto.price
-      }
+      imageUrl: dto.imageUrl ?? undefined
     }));
   }
 
@@ -132,7 +122,7 @@ export class CartService {
     this.cartItemsSubject.next([...cartItems]);
 
     const total = cartItems.reduce(
-      (sum, item) => sum + (item.product.price * item.quantity),
+      (sum, item) => sum + (item.price * item.quantity),
       0
     );
     this.cartTotalSubject.next(total);

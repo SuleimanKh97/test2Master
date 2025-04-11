@@ -1,4 +1,24 @@
 <app-header></app-header>
 
-<router-outlet></router-outlet>
+<main>
+    <router-outlet></router-outlet>
+</main>
+
 <app-footer></app-footer>
+
+<!-- Chatbot Floating Action Button (FAB) -->
+<button class="chatbot-fab" (click)="toggleChatbot()" title="اسأل المساعد الذكي">
+    <i class="fas fa-robot"></i>
+</button>
+
+<!-- Chatbot Popup Window -->
+<div class="chatbot-popup shadow" *ngIf="isChatbotVisible">
+    <div class="chatbot-popup-header">
+        <h5>مساعد سوق الحلال</h5>
+        <button class="btn-close btn-sm" (click)="toggleChatbot()" aria-label="Close"></button>
+    </div>
+    <div class="chatbot-popup-content">
+        <!-- Embed the ChatbotComponent here -->
+        <app-chatbot></app-chatbot>
+    </div>
+</div>

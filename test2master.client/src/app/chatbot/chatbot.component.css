@@ -1,0 +1,96 @@
+.chatbot-container {
+    max-width: 700px;
+    margin: 2rem auto;
+    padding: 1.5rem;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    direction: rtl;
+    /* Right-to-left direction */
+}
+
+.message-area {
+    height: 450px;
+    /* Adjust height as needed */
+    overflow-y: auto;
+    border: 1px solid #ccc;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    background-color: #fff;
+    border-radius: 5px;
+}
+
+.message-bubble {
+    padding: 0.75rem 1rem;
+    border-radius: 15px;
+    margin-bottom: 0.75rem;
+    max-width: 80%;
+    word-wrap: break-word;
+}
+
+.user-message {
+    background-color: #dcf8c6;
+    /* Light green */
+    margin-right: auto;
+    /* Align user messages to the right (in RTL) */
+    margin-left: 20%;
+    /* Add margin to the left */
+    border-bottom-right-radius: 3px;
+}
+
+.bot-message {
+    background-color: #e9e9eb;
+    /* Light gray */
+    margin-left: auto;
+    /* Align bot messages to the left (in RTL) */
+    margin-right: 20%;
+    /* Add margin to the right */
+    border-bottom-left-radius: 3px;
+}
+
+.message-text {
+    font-size: 0.95rem;
+}
+
+.message-timestamp {
+    font-size: 0.7rem;
+    color: #888;
+    text-align: left;
+    /* Keep timestamp left-aligned even in RTL */
+    margin-top: 5px;
+}
+
+.user-message .message-timestamp {
+    text-align: right;
+    /* Timestamp on right for user */
+}
+
+.input-area {
+    display: flex;
+    align-items: flex-end;
+    /* Align items to bottom for multi-line textarea */
+}
+
+.input-area textarea {
+    flex-grow: 1;
+    resize: none;
+    /* Prevent manual resizing */
+}
+
+.input-area button {
+    flex-shrink: 0;
+    /* Prevent button from shrinking */
+    height: fit-content;
+    /* Adjust height to content */
+    align-self: flex-end;
+    /* Align button to bottom */
+}
+
+.loading-indicator {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-style: italic;
+    color: #555;
+}

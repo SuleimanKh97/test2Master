@@ -1,0 +1,43 @@
+<div class="chatbot-container">
+    <h3 class="text-center mb-3">مساعد سوق الحلال الذكي</h3>
+
+    <!-- Message Display Area -->
+    <div class="message-area" #messageContainer>
+        <div *ngFor="let msg of messages" class="message-bubble"
+            [ngClass]="{'user-message': msg.sender === 'user', 'bot-message': msg.sender === 'bot'}">
+            <div class="message-text">{{ msg.text }}</div>
+            <div class="message-timestamp">{{ msg.timestamp | date:'shortTime' }}</div>
+        </div>
+        <!-- Loading Indicator -->
+        <div *ngIf="isLoading" class="message-bubble bot-message loading-indicator">
+            <div class="spinner-border spinner-border-sm" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <span>جارٍ التفكير...</span>
+        </div>
+    </div>
+
+    <!-- Error Display -->
+    <div *ngIf="errorMessage" class="alert alert-danger mt-2" role="alert">
+        <strong>خطأ:</strong> {{ errorMessage }}
+        <button type="button" class="btn-close float-end" (click)="errorMessage = null" aria-label="Close"></button>
+    </div>
+
+    <!-- Input Area -->
+    <div class="input-area mt-3">
+        <textarea class="form-control" placeholder="اكتب رسالتك هنا..." [(ngModel)]="userInput"
+            (keydown.enter)="sendMessage(); $event.preventDefault()" [disabled]="isLoading" rows="2">
+    </textarea>
+        <button class="btn btn-success ms-2" (click)="sendMessage()" [disabled]="!userInput.trim() || isLoading">
+            <i class="fas fa-paper-plane"></i> إرسال
+        </button>
+    </div>
+
+    <!-- API Key Warning -->
+    <div class="alert alert-warning small mt-3" role="alert">
+        <i class="fas fa-exclamation-triangle me-1"></i>
+        <strong>تنبيه للمطور:</strong> مفتاح Google API مدمج حاليًا في الكود الأمامي لأغراض العرض التوضيحي.
+        يجب نقله إلى الواجهة الخلفية أو متغيرات البيئة قبل النشر في بيئة الإنتاج.
+    </div>
+
+</div>

@@ -99,6 +99,9 @@
           <li class="nav-item">
             <a class="nav-link" routerLink="/contact" routerLinkActive="active">اتصل بنا</a>
           </li>
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/blog" routerLinkActive="active">المدونة</a>
+          </li>
         </ul>
 
         <!-- Auth Links & Icons (Far Left in RTL) -->
@@ -167,16 +170,52 @@
             </a>
           </li>
 
-          <!-- Cart Icon (Hidden for Seller and Admin) -->
-          <li class="nav-item"
-            *ngIf="!isLoggedIn || (isLoggedIn && currentUser?.role !== 'Seller' && currentUser?.role !== 'Admin')">
+          <!-- Cart Icon & Preview (Hidden for Seller and Admin) -->
+          <li class="nav-item cart-icon-container position-relative"
+            *ngIf="!isLoggedIn || (isLoggedIn && currentUser?.role !== 'Seller' && currentUser?.role !== 'Admin')"
+            (mouseenter)="showCartPreview()" (mouseleave)="hideCartPreview()">
+
             <a class="nav-link nav-icon position-relative" routerLink="/cart" title="عربة التسوق">
               <i class="fa-solid fa-cart-shopping"></i>
               <!-- Counter Badge -->
               <span class="badge bg-danger rounded-circle position-absolute top-0 start-100 translate-middle"
                 *ngIf="(cartCount$ | async) as count">{{ count > 0 ? count : '' }}</span>
             </a>
+
+            <!-- Cart Preview Dropdown -->
+            <div class="cart-preview shadow rounded bg-white p-3" *ngIf="isCartPreviewVisible"
+              (mouseenter)="showCartPreview()" (mouseleave)="hideCartPreview()">
+
+              <ng-container *ngIf="cartItems$ | async as items; else emptyCart">
+                <div *ngIf="items.length > 0; else emptyCart">
+                  <div *ngFor="let item of items" class="cart-preview-item d-flex align-items-center mb-3">
+                    <!-- Access properties directly from item -->
+                    <img [src]="item.imageUrl || 'assets/images/placeholder.png'" [alt]="item.productName"
+                      class="cart-preview-img me-2 rounded">
+                    <div class="flex-grow-1">
+                      <div class="fw-bold">{{ item.productName }}</div>
+                      <div class="text-muted small">{{ item.quantity }} × {{ item.price | currency:'JOD' }}
+                      </div>
+                    </div>
+                    <!-- Optional: Add remove button -->
+                    <!-- <button class="btn btn-sm btn-outline-danger ms-2">&times;</button> -->
+                  </div>
+                  <hr class="my-2">
+                  <div class="d-flex justify-content-between fw-bold mb-3">
+                    <span>الإجمالي:</span>
+                    <span>{{ cartTotal$ | async | currency:'JOD' }}</span>
+                  </div>
+                  <a routerLink="/cart" class="btn btn-primary w-100">الذهاب إلى السلة</a>
+                </div>
+              </ng-container>
+
+              <ng-template #emptyCart>
+                <p class="text-center text-muted mb-0">سلة التسوق فارغة.</p>
+              </ng-template>
+            </div>
+            <!-- End Cart Preview Dropdown -->
           </li>
+          <!-- End Cart Icon & Preview -->
         </ul>
 
       </div>

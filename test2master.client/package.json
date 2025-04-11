@@ -13,6 +13,7 @@
   },
   "private": true,
   "dependencies": {
+    "@angular/animations": "^19.2.5",
     "@angular/common": "^19.2.0",
     "@angular/compiler": "^19.2.0",
     "@angular/core": "^19.2.0",
@@ -22,6 +23,7 @@
     "@angular/router": "^19.2.0",
     "@fortawesome/fontawesome-free": "^6.7.2",
     "jest-editor-support": "*",
+    "ngx-toastr": "^19.0.0",
     "run-script-os": "*",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",

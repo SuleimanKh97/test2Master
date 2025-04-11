@@ -1,86 +1,94 @@
-<div class="container mt-4">
-    <h3>سجل الطلبات</h3>
+<div class="container my-5 order-history-container">
+    <h2 class="text-center mb-4">سجل الطلبات</h2>
 
-    <!-- Status Filter Buttons (Optional but recommended) -->
-    <div class="btn-group mb-3" role="group" aria-label="Filter by status">
-        <button type="button" class="btn" [ngClass]="selectedStatus === 'All' ? 'btn-primary' : 'btn-outline-primary'"
-            (click)="filterByStatus('All')">الكل</button>
-        <button type="button" class="btn"
-            [ngClass]="selectedStatus === 'Pending' ? 'btn-primary' : 'btn-outline-primary'"
-            (click)="filterByStatus('Pending')">قيد الانتظار</button>
-        <button type="button" class="btn"
-            [ngClass]="selectedStatus === 'Processing' ? 'btn-primary' : 'btn-outline-primary'"
-            (click)="filterByStatus('Processing')">قيد المعالجة</button>
-        <button type="button" class="btn"
-            [ngClass]="selectedStatus === 'Shipped' ? 'btn-primary' : 'btn-outline-primary'"
-            (click)="filterByStatus('Shipped')">تم الشحن</button>
-        <button type="button" class="btn"
-            [ngClass]="selectedStatus === 'Delivered' ? 'btn-primary' : 'btn-outline-primary'"
-            (click)="filterByStatus('Delivered')">تم التوصيل</button>
-        <button type="button" class="btn"
-            [ngClass]="selectedStatus === 'Cancelled' ? 'btn-primary' : 'btn-outline-primary'"
-            (click)="filterByStatus('Cancelled')">ملغي</button>
+    <!-- Error Message Display -->
+    <div *ngIf="errorMessage && !(orders$ | async)" class="alert alert-danger">
+        حدث خطأ أثناء تحميل سجل الطلبات: {{ errorMessage }}
     </div>
 
-    <!-- Loading Indicator -->
-    <div *ngIf="!(filteredOrders$ | async) && !errorMessage" class="text-center">
-        <div class="spinner-border text-primary" role="status">
-            <span class="visually-hidden">جار تحميل الطلبات...</span>
+    <div *ngIf="orders$ | async as orders; else loading">
+
+        <!-- Order Filters -->
+        <div class="mb-3 d-flex justify-content-center flex-wrap filter-buttons">
+            <button class="btn btn-sm mx-1 mb-1"
+                [ngClass]="selectedStatus === 'All' ? 'btn-primary' : 'btn-outline-secondary'"
+                (click)="filterByStatus('All')">الكل</button>
+            <button class="btn btn-sm mx-1 mb-1"
+                [ngClass]="selectedStatus === 'Pending' ? 'btn-primary' : 'btn-outline-secondary'"
+                (click)="filterByStatus('Pending')">قيد الانتظار</button>
+            <button class="btn btn-sm mx-1 mb-1"
+                [ngClass]="selectedStatus === 'Processing' ? 'btn-primary' : 'btn-outline-secondary'"
+                (click)="filterByStatus('Processing')">قيد المعالجة</button>
+            <button class="btn btn-sm mx-1 mb-1"
+                [ngClass]="selectedStatus === 'Shipped' ? 'btn-primary' : 'btn-outline-secondary'"
+                (click)="filterByStatus('Shipped')">تم الشحن</button>
+            <button class="btn btn-sm mx-1 mb-1"
+                [ngClass]="selectedStatus === 'Delivered' ? 'btn-primary' : 'btn-outline-secondary'"
+                (click)="filterByStatus('Delivered')">تم التوصيل</button>
+            <button class="btn btn-sm mx-1 mb-1"
+                [ngClass]="selectedStatus === 'Cancelled' ? 'btn-primary' : 'btn-outline-secondary'"
+                (click)="filterByStatus('Cancelled')">ملغي</button>
         </div>
-    </div>
 
-    <!-- Error Message -->
-    <div *ngIf="errorMessage" class="alert alert-danger">
-        {{ errorMessage }}
-    </div>
-
-    <!-- Order List -->
-    <div *ngIf="(filteredOrders$ | async) as orders; else noOrders">
-        <div *ngIf="orders.length > 0; else noOrders">
+        <div *ngIf="orders.length > 0; else noOrders" class="orders-list">
             <div class="accordion" id="orderHistoryAccordion">
-                <div *ngFor="let order of orders; let i = index" class="accordion-item mb-2">
+                <div *ngFor="let order of orders; let i = index" class="accordion-item mb-3 shadow-sm">
                     <h2 class="accordion-header" [id]="'heading' + i">
                         <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
                             [attr.data-bs-target]="'#collapse' + i" aria-expanded="false"
                             [attr.aria-controls]="'collapse' + i">
-                            <div class="d-flex w-100 justify-content-between">
-                                <span>طلب رقم #{{ order.orderId }}</span>
-                                <span>{{ order.orderDate | date:'yyyy/MM/dd hh:mm a' }}</span>
-                                <span>المجموع: {{ order.totalAmount | currency:'JOD' }}</span>
-                                <span>الحالة: <span [ngClass]="getStatusClass(order.status)">{{
-                                        getStatusTranslation(order.status) }}</span></span>
+                            <div class="d-flex justify-content-between align-items-center w-100 me-3 flex-wrap">
+                                <span class="order-info-item">طلب رقم: <strong>#{{ order.orderId }}</strong></span>
+                                <span class="order-info-item">التاريخ: {{ order.orderDate | date:'yyyy/MM/dd' }}</span>
+                                <span class="order-info-item">الإجمالي: <strong>{{ order.totalAmount | currency:'JOD'
+                                        }}</strong></span>
+                                <span class="badge rounded-pill" [ngClass]="getStatusClass(order.status)">
+                                    {{ getStatusTranslation(order.status) }}
+                                </span>
                             </div>
                         </button>
                     </h2>
                     <div [id]="'collapse' + i" class="accordion-collapse collapse"
                         [attr.aria-labelledby]="'heading' + i" data-bs-parent="#orderHistoryAccordion">
                         <div class="accordion-body">
-                            <h5>تفاصيل الطلب:</h5>
-                            <ul class="list-group list-group-flush mb-3">
-                                <li *ngFor="let item of order.orderItems"
-                                    class="list-group-item d-flex justify-content-between align-items-center">
-                                    <div class="d-flex align-items-center">
-                                        <img [src]="item.imageUrl || 'assets/placeholder-image.png'"
-                                            alt="{{ item.productName }}" width="50" class="me-3 rounded">
-                                        <div>
-                                            <div>{{ item.productName }}</div>
-                                            <small class="text-muted">الكمية: {{ item.quantity }}</small>
-                                        </div>
-                                    </div>
-                                    <span>{{ item.price | currency:'JOD' }} للقطعة</span>
-                                </li>
-                            </ul>
-                            <!-- Cancel Button Logic -->
-                            <div *ngIf="order.status?.toLowerCase() === 'pending' || order.status?.toLowerCase() === 'processing'"
-                                class="action-buttons mt-2">
-                                <button class="btn btn-sm btn-outline-danger" (click)="cancelOrder(order.orderId)">
-                                    <i class="fas fa-times me-1"></i> إلغاء الطلب
-                                </button>
-                            </div>
-                            <!-- Mark as Delivered Button Logic -->
-                            <div *ngIf="order.status?.toLowerCase() === 'shipped'" class="action-buttons mt-2">
-                                <button class="btn btn-sm btn-success" (click)="markAsDelivered(order.orderId)">
+                            <h6 class="mb-3">تفاصيل الطلب:</h6>
+                            <!-- Add more details like shipping address if available in order DTO -->
+                            <table class="table table-sm table-hover order-items-table mb-3">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">المنتج</th>
+                                        <th scope="col">الكمية</th>
+                                        <th scope="col">السعر</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let item of order.orderItems">
+                                        <td>
+                                            <img [src]="item.imageUrl || 'assets/images/placeholder.png'"
+                                                alt="{{ item.productName }}" width="40"
+                                                class="me-2 rounded align-middle">
+                                            <span class="align-middle">{{ item.productName }}</span>
+                                        </td>
+                                        <td>{{ item.quantity }}</td>
+                                        <td>{{ item.price | currency:'JOD' }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                            <!-- Action Buttons -->
+                            <div class="mt-3 text-start action-buttons">
+                                <button class="btn btn-sm btn-success ms-2" *ngIf="order.status === 'Shipped'"
+                                    (click)="markAsDelivered(order)">
                                     <i class="fas fa-check-circle me-1"></i> تأكيد الاستلام
+                                </button>
+                                <button class="btn btn-sm btn-danger ms-2"
+                                    *ngIf="order.status === 'Pending' || order.status === 'Processing'"
+                                    (click)="cancelOrder(order.orderId)">
+                                    <i class="fas fa-times-circle me-1"></i> إلغاء الطلب
+                                </button>
+                                <button class="btn btn-sm btn-info ms-2" *ngIf="order.status === 'Delivered'"
+                                    (click)="openFeedbackModal(order)">
+                                    <i class="fas fa-star me-1"></i> تقييم المنتجات
                                 </button>
                             </div>
                         </div>
@@ -88,13 +96,25 @@
                 </div>
             </div>
         </div>
+
+        <ng-template #noOrders>
+            <div class="alert alert-info text-center mt-4">لا توجد طلبات لعرضها حسب الفلتر المحدد.</div>
+        </ng-template>
     </div>
 
-    <!-- No Orders Template -->
-    <ng-template #noOrders>
-        <div *ngIf="!errorMessage" class="alert alert-info text-center mt-3">
-            لا توجد طلبات تطابق هذا الفلتر.
+    <ng-template #loading>
+        <div *ngIf="!errorMessage" class="text-center my-5">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="mt-2">جاري تحميل الطلبات...</p>
         </div>
     </ng-template>
+
+
+    <!-- Feedback Modal Component -->
+    <app-feedback-modal [isVisible]="isFeedbackModalVisible" [productsToReview]="productsForReview"
+        (closeModal)="closeFeedbackModal()" (feedbackSubmitted)="handleFeedbackSubmitted($event)">
+    </app-feedback-modal>
 
 </div>

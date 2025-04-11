@@ -1,0 +1,78 @@
+<!-- Modal Overlay -->
+<div class="modal-overlay" *ngIf="isVisible" (click)="close()"></div>
+
+<!-- Modal Content -->
+<div class="feedback-modal" *ngIf="isVisible">
+    <div class="modal-header">
+        <h5 class="modal-title">تقييم المنتجات في طلبك</h5>
+        <button type="button" class="btn-close" aria-label="Close" (click)="close()"></button>
+    </div>
+
+    <div class="modal-body">
+        <p>شكراً لتأكيد استلام طلبك! يرجى تقييم المنتجات التي استلمتها:</p>
+
+        <!-- General Error Display -->
+        <div *ngIf="generalError" class="alert alert-danger alert-sm">{{ generalError }}</div>
+
+        <!-- Feedback Form -->
+        <form [formGroup]="feedbackForm">
+            <div formArrayName="feedbacks">
+                <div *ngFor="let feedbackGroup of feedbackControls; let i = index" [formGroupName]="i"
+                    class="product-feedback-item mb-4 p-3 border rounded bg-light">
+
+                    <div class="d-flex align-items-center mb-3">
+                        <img [src]="productsToReview[i].imageUrl || 'assets/images/placeholder.png'"
+                            [alt]="productsToReview[i].name" class="product-image me-3">
+                        <h6 class="mb-0 flex-grow-1">{{ productsToReview[i].name }}</h6>
+                    </div>
+
+                    <!-- Rating Stars -->
+                    <div class="mb-3">
+                        <label class="form-label">تقييمك:</label>
+                        <div class="rating-stars"
+                            [class.is-invalid]="feedbackGroup.get('rating')?.invalid && feedbackGroup.get('rating')?.touched">
+                            <span *ngFor="let star of [1, 2, 3, 4, 5]" class="star"
+                                [class.filled]="(feedbackGroup.get('rating')?.value || 0) >= star"
+                                (click)="setRating(i, star)">
+                                ★
+                            </span>
+                        </div>
+                        <div *ngIf="feedbackGroup.get('rating')?.invalid && feedbackGroup.get('rating')?.touched"
+                            class="invalid-feedback d-block">
+                            التقييم مطلوب (1-5 نجوم).
+                        </div>
+                    </div>
+
+                    <!-- Comment -->
+                    <div class="mb-3">
+                        <label [for]="'comment-' + i" class="form-label">تعليق (اختياري):</label>
+                        <textarea class="form-control form-control-sm" [id]="'comment-' + i" formControlName="comment"
+                            rows="2" placeholder="شاركنا رأيك..."></textarea>
+                    </div>
+
+                    <!-- Submit Button & Status -->
+                    <div class="d-flex justify-content-end align-items-center">
+                        <span *ngIf="feedbackGroup.get('submitError')?.value" class="text-danger me-2 small">{{
+                            feedbackGroup.get('submitError')?.value }}</span>
+
+                        <button type="button" class="btn btn-sm btn-primary" (click)="onSubmitProductFeedback(i)"
+                            [disabled]="feedbackGroup.invalid || feedbackGroup.get('submitted')?.value || isLoading">
+                            <span *ngIf="!feedbackGroup.get('submitted')?.value && !isLoading">إرسال التقييم</span>
+                            <span *ngIf="feedbackGroup.get('submitted')?.value"><i class="fas fa-check"></i> تم
+                                التقييم</span>
+                            <span *ngIf="isLoading && !feedbackGroup.get('submitted')?.value"
+                                class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+        </form>
+
+    </div>
+
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="close()">إغلاق</button>
+    </div>
+
+</div>

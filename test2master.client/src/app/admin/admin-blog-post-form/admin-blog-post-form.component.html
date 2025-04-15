@@ -1,1 +1,64 @@
-<p>admin-blog-post-form works!</p>
+<div class="container mt-4" dir="rtl">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>{{ isEditMode ? 'تعديل المقال' : 'إنشاء مقال جديد' }}</h2>
+        <a routerLink="/admin/blog" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-right me-1"></i> العودة إلى قائمة المقالات
+        </a>
+    </div>
+
+    <div *ngIf="error" class="alert alert-danger">
+        {{ error }}
+    </div>
+
+    <div *ngIf="successMessage" class="alert alert-success">
+        {{ successMessage }}
+    </div>
+
+    <div *ngIf="loading" class="text-center my-5">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">جار التحميل...</span>
+        </div>
+        <p class="mt-2">جار تحميل بيانات المقال...</p>
+    </div>
+
+    <form [formGroup]="blogForm" (ngSubmit)="onSubmit()" *ngIf="!loading">
+        <div class="mb-3">
+            <label for="title" class="form-label">عنوان المقال*</label>
+            <input type="text" class="form-control" id="title" formControlName="title">
+            <div *ngIf="blogForm.get('title')?.invalid && blogForm.get('title')?.touched" class="text-danger mt-1">
+                <small *ngIf="blogForm.get('title')?.errors?.['required']">العنوان مطلوب</small>
+                <small *ngIf="blogForm.get('title')?.errors?.['maxlength']">العنوان يجب أن لا يتجاوز 255 حرف</small>
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label for="content" class="form-label">محتوى المقال*</label>
+            <textarea class="form-control" id="content" formControlName="content" rows="12"></textarea>
+            <div *ngIf="blogForm.get('content')?.invalid && blogForm.get('content')?.touched" class="text-danger mt-1">
+                <small *ngIf="blogForm.get('content')?.errors?.['required']">المحتوى مطلوب</small>
+            </div>
+            <small class="text-muted">يمكنك استخدام HTML بسيط لتنسيق المحتوى، مثل &lt;h2&gt;, &lt;p&gt;, &lt;strong&gt;,
+                &lt;em&gt;, &lt;ul&gt;, &lt;ol&gt;, &lt;li&gt;, &lt;a&gt;</small>
+        </div>
+
+        <div class="mb-3">
+            <label for="imageUrl" class="form-label">رابط الصورة</label>
+            <input type="text" class="form-control" id="imageUrl" formControlName="imageUrl">
+            <small class="text-muted">أدخل رابط URL للصورة الرئيسية للمقال (اختياري)</small>
+        </div>
+
+        <div class="mb-3 form-check">
+            <input type="checkbox" class="form-check-input" id="isPublished" formControlName="isPublished">
+            <label class="form-check-label" for="isPublished">نشر المقال (إذا لم يتم تحديده، سيتم حفظه كمسودة)</label>
+        </div>
+
+        <div class="d-flex gap-2 mt-4">
+            <button type="submit" class="btn btn-primary" [disabled]="submitting || blogForm.invalid">
+                <span *ngIf="submitting" class="spinner-border spinner-border-sm me-1" role="status"
+                    aria-hidden="true"></span>
+                {{ isEditMode ? 'تحديث المقال' : 'إنشاء المقال' }}
+            </button>
+            <button type="button" class="btn btn-secondary" routerLink="/admin/blog">إلغاء</button>
+        </div>
+    </form>
+</div>

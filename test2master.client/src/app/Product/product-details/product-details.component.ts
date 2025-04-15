@@ -2,8 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Product } from '../../Models/product.module';
-import { ProductService } from '../../Services/product.service';
-import { CartService } from '../../Services/cart/cart.service';
+import { ProductService } from '../../services/product.service';
+import { CartService } from '../../services/cart/cart.service';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -21,7 +21,7 @@ export class ProductDetailsComponent {
     private route: ActivatedRoute,
     private router: Router,
     private productService: ProductService,
-      private cartService: CartService // ضفناها هون
+    private cartService: CartService // ضفناها هون
 
   ) { }
 

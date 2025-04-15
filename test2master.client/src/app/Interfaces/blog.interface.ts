@@ -3,38 +3,43 @@
 export interface BlogPostSummaryDTO {
     id: number;
     title: string;
-    publishedDate: Date;
+    summary: string;
     imageUrl?: string;
     authorName: string;
-    excerpt?: string;
-  }
-  
-  export interface BlogPostDetailDTO {
+    createdAt: Date;
+}
+
+export interface BlogPostDetailDTO {
     id: number;
     title: string;
-    content: string; // Full content
-    publishedDate: Date;
+    content: string;
     imageUrl?: string;
     authorName: string;
-  }
-  
-  // DTO for admin listing
-  export interface AdminBlogPostListDTO {
-      id: number;
-      title: string;
-      publishedDate: Date;
-      authorName: string;
-  }
-  
-  // DTOs for creating/updating posts
-  export interface CreateBlogPostDTO {
-      title: string;
-      content: string;
-      imageUrl?: string;
-  }
-  
-  export interface UpdateBlogPostDTO {
-      title: string;
-      content: string;
-      imageUrl?: string;
-  }
+    createdAt: Date;
+    updatedAt?: Date;
+}
+
+// DTO for admin listing
+export interface AdminBlogPostListDTO {
+    id: number;
+    title: string;
+    createdAt: Date;
+    updatedAt?: Date;
+    isPublished: boolean;
+    authorName: string;
+}
+
+// DTOs for creating/updating posts
+export interface CreateBlogPostDTO {
+    title: string;
+    content: string;
+    imageUrl?: string;
+    isPublished: boolean;
+}
+
+export interface UpdateBlogPostDTO {
+    title?: string;
+    content?: string;
+    imageUrl?: string;
+    isPublished?: boolean;
+}

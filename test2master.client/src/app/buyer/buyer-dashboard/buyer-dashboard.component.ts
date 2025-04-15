@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { AuthService } from '../../Services/auth/auth.service'; // Verify path
+import { AuthService } from '../../services/auth/auth.service'; // Fixed casing
 import { CommonModule } from '@angular/common'; // Import CommonModule
 import { Router, RouterModule } from '@angular/router'; // Import Router and RouterModule
 

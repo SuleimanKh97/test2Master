@@ -1,4 +1,4 @@
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, catchError, throwError } from 'rxjs';
 
@@ -25,28 +25,58 @@ export interface ProductDetailDTO {
 }
 // -------------------------------------------------------
 
+// Interface for the category list from backend
+export interface CategoryDTO {
+    id: number;
+    name: string;
+}
+
 @Injectable({
     providedIn: 'root'
 })
 export class ProductService {
 
     // Adjust the base URL to your actual backend API URL
-    private baseUrl = 'https://localhost:7158'; // Make sure this matches your backend port
+    private baseUrl = 'https://localhost:7158'; // *** Reverted Port to 7158 ***
+    private productApiUrl = `${this.baseUrl}/Product`;
 
     constructor(private http: HttpClient) { }
 
-    // Fetch products for the shop page
-    getShopProducts(): Observable<ShopProductDTO[]> {
-        const url = `${this.baseUrl}/Product/listProduct`;
-        console.log('ProductService: Fetching shop products from:', url);
-        return this.http.get<ShopProductDTO[]>(url).pipe(
+    // Fetch products for the shop page with optional filters
+    getShopProducts(categoryId?: number, minPrice?: number, maxPrice?: number, searchQuery?: string): Observable<ShopProductDTO[]> {
+        let params = new HttpParams();
+        if (categoryId && categoryId > 0) {
+            params = params.set('categoryId', categoryId.toString());
+        }
+        if (minPrice !== undefined && minPrice !== null) {
+            params = params.set('minPrice', minPrice.toString());
+        }
+        if (maxPrice !== undefined && maxPrice !== null) {
+            params = params.set('maxPrice', maxPrice.toString());
+        }
+        if (searchQuery && searchQuery.trim() !== '') {
+            params = params.set('searchQuery', searchQuery.trim());
+        }
+
+        const url = `${this.productApiUrl}/listProduct`;
+        console.log('ProductService: Fetching shop products from:', url, 'with params:', params.toString());
+        return this.http.get<ShopProductDTO[]>(url, { params }).pipe(
+            catchError(this.handleError)
+        );
+    }
+
+    // Fetch available categories
+    getCategories(): Observable<CategoryDTO[]> {
+        const url = `${this.productApiUrl}/categories`;
+        console.log('ProductService: Fetching categories from:', url);
+        return this.http.get<CategoryDTO[]>(url).pipe(
             catchError(this.handleError)
         );
     }
 
     // --- Updated getProductById to return ProductDetailDTO ---
     getProductById(id: string): Observable<ProductDetailDTO> {
-        const url = `${this.baseUrl}/Product/GetProductBy${id}`;
+        const url = `${this.productApiUrl}/GetProductBy${id}`;
         console.log('ProductService: Fetching product details from:', url);
         return this.http.get<ProductDetailDTO>(url).pipe(
             catchError(this.handleError) // Use the shared error handler

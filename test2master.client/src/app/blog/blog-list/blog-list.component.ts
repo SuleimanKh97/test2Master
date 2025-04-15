@@ -3,8 +3,8 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { Title } from '@angular/platform-browser';
 import { Observable } from 'rxjs';
-import { BlogService } from '../../Services/blog/blog.service'; // Verify path
-import { BlogPostSummaryDTO } from '../../Interfaces/blog.interface'; // Verify path
+import { BlogService } from '../../services/blog/blog.service';
+import { BlogPostSummaryDTO } from '../../interfaces/blog.interface';
 
 @Component({
   selector: 'app-blog-list',
@@ -21,8 +21,7 @@ export class BlogListComponent implements OnInit {
 
   ngOnInit(): void {
     this.titleService.setTitle('المدونة - سوق الحلال');
-    // Fetch all posts (or a large number for now)
-    // Consider adding pagination to the service and component later
-    this.allPosts$ = this.blogService.getBlogPosts(100); // Fetch up to 100 posts
+    // Fetch all posts
+    this.allPosts$ = this.blogService.getBlogPosts();
   }
 }

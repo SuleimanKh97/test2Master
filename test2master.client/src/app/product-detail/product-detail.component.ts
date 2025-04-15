@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ProductService, ProductDetailDTO } from '../Services/product/product.service';
-import { CartService } from '../Services/cart/cart.service';
+import { ProductService, ProductDetailDTO } from '../services/product/product.service';
+import { CartService } from '../services/cart/cart.service';
 import { Product } from '../Models/product.module';
 import { Observable, Subscription, EMPTY } from 'rxjs';
 import { catchError, switchMap } from 'rxjs/operators';

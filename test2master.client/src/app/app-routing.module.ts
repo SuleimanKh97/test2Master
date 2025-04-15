@@ -27,6 +27,10 @@ import { AdminCategoryListComponent } from './admin/admin-categories/admin-categ
 import { ShopComponent } from './shop/shop.component';
 import { ProductDetailComponent } from './product-detail/product-detail.component';
 import { SimulatePaymentComponent } from './simulate-payment/simulate-payment.component';
+import { BlogListComponent } from './blog/blog-list/blog-list.component';
+import { BlogPostDetailComponent } from './blog/blog-post-detail/blog-post-detail.component';
+import { AdminBlogListComponent } from './admin/admin-blog-list/admin-blog-list.component';
+import { AdminBlogPostFormComponent } from './admin/admin-blog-post-form/admin-blog-post-form.component';
 
 const routes: Routes = [
   { path: '', component: LandingPageComponent },
@@ -51,6 +55,14 @@ const routes: Routes = [
     path: 'order-confirmation',
     component: OrderHistoryComponent,
     canActivate: [AuthGuard]
+  },
+  {
+    path: 'blog',
+    component: BlogListComponent
+  },
+  {
+    path: 'blog/:id',
+    component: BlogPostDetailComponent
   },
   { path: 'buyer-dashboard', component: BuyerDashboardComponent, canActivate: [AuthGuard], data: { roles: ['Buyer'] } },
   { path: 'seller-dashboard', component: SellerDashboardComponent, canActivate: [AuthGuard], data: { roles: ['Seller'] } },
@@ -105,6 +117,24 @@ const routes: Routes = [
   {
     path: 'admin/categories',
     component: AdminCategoryListComponent,
+    canActivate: [AuthGuard],
+    data: { roles: ['Admin'] }
+  },
+  {
+    path: 'admin/blog',
+    component: AdminBlogListComponent,
+    canActivate: [AuthGuard],
+    data: { roles: ['Admin'] }
+  },
+  {
+    path: 'admin/blog/new',
+    component: AdminBlogPostFormComponent,
+    canActivate: [AuthGuard],
+    data: { roles: ['Admin'] }
+  },
+  {
+    path: 'admin/blog/edit/:id',
+    component: AdminBlogPostFormComponent,
     canActivate: [AuthGuard],
     data: { roles: ['Admin'] }
   }

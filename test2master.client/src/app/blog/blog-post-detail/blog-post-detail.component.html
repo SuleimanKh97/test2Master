@@ -9,7 +9,8 @@
 
                 <h1 class="fw-bolder mb-1 display-5">{{ post.title }}</h1>
                 <div class="text-muted fst-italic mb-2">
-                    نشر بتاريخ {{ post.publishedDate | date:'fullDate' }} بواسطة {{ post.authorName }}
+                    نشر بتاريخ {{ post.createdAt | date:'fullDate' }} بواسطة {{ post.authorName }}
+                    <span *ngIf="post.updatedAt">(تم التحديث: {{ post.updatedAt | date:'shortDate' }})</span>
                 </div>
                 <!-- Optional Categories/Tags can go here -->
             </header>

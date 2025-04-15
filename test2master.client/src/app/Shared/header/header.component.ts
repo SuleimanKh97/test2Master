@@ -2,10 +2,10 @@ import { Component, OnInit, HostListener, ElementRef, Renderer2, OnDestroy, View
 import { Observable, Subscription } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { CartService } from '../../Services/cart/cart.service';
-import { AuthService } from '../../Services/auth/auth.service';
+import { CartService } from '../../services/cart/cart.service';
+import { AuthService } from '../../services/auth/auth.service';
 import { Router } from '@angular/router';
-import { CartItem } from '../../Interfaces/cart.interface';
+import { CartItem } from '../../interfaces/cart.interface';
 
 @Component({
   selector: 'app-header',

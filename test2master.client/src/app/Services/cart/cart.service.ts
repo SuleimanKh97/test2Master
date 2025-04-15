@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, throwError, of } from 'rxjs';
 import { map, catchError, tap, switchMap } from 'rxjs/operators';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { CartItem } from '../../Interfaces/cart.interface';
+import { CartItem } from '../../interfaces/cart.interface';
 
 interface CartItemResponseDTO {
   productId: number;

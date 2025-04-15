@@ -4,8 +4,8 @@ import { CommonModule } from '@angular/common';
 import { DomSanitizer, SafeHtml, Title } from '@angular/platform-browser';
 import { Observable, of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
-import { BlogService } from '../../Services/blog/blog.service';
-import { BlogPostDetailDTO } from '../../Interfaces/blog.interface';
+import { BlogService } from '../../services/blog/blog.service';
+import { BlogPostDetailDTO } from '../../interfaces/blog.interface';
 
 @Component({
   selector: 'app-blog-post-detail',
@@ -38,7 +38,7 @@ export class BlogPostDetailComponent implements OnInit {
     this.post$.subscribe(post => {
       if (post) {
         this.titleService.setTitle(`${post.title} - مدونة سوق الحلال`);
-        this.postContentSanitized = this.sanitizer.sanitize(SecurityContext.HTML, post.content);
+        this.postContentSanitized = this.sanitizer.bypassSecurityTrustHtml(post.content);
         console.log("Post content sanitized.");
       } else {
         this.titleService.setTitle('المقال غير موجود - مدونة سوق الحلال');

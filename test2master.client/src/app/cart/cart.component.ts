@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { map, Observable, Subscription } from 'rxjs';
-import { CartService } from '../Services/cart/cart.service';
-import { CartItem } from '../Interfaces/cart.interface';
+import { CartService } from '../services/cart/cart.service';
+import { CartItem } from '../interfaces/cart.interface';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { AuthService } from '../../Services/auth/auth.service';
+import { AuthService } from '../../services/auth/auth.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 interface LoginResponse {
@@ -124,8 +124,8 @@ export class LoginComponent implements OnInit {
           console.log('Navigating to /seller-dashboard');
           this.router.navigate(['/seller-dashboard']);
         } else if (role === 'buyer') {
-          console.log('Navigating to /buyer-dashboard');
-          this.router.navigate(['/buyer-dashboard']);
+          console.log('Navigating to /shop');
+          this.router.navigate(['/shop']);
         } else {
           console.warn('Unknown or missing role. Navigating to home.', res.role);
           this.router.navigate(['/']); // Navigate to home page as a fallback

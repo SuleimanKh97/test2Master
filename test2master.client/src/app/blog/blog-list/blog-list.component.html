@@ -14,10 +14,10 @@
                                 class="text-decoration-none text-dark stretched-link">{{ post.title }}</a>
                         </h5>
                         <p class="card-text text-muted small mb-2">
-                            <i class="fas fa-calendar-alt me-1"></i> {{ post.publishedDate | date:'longDate' }} - بواسطة
+                            <i class="fas fa-calendar-alt me-1"></i> {{ post.createdAt | date:'longDate' }} - بواسطة
                             {{ post.authorName }}
                         </p>
-                        <p class="card-text blog-card-excerpt flex-grow-1">{{ post.excerpt }}</p>
+                        <p class="card-text blog-card-excerpt flex-grow-1">{{ post.summary }}</p>
                         <div class="mt-auto pt-2">
                             <!-- Read more button removed as title is link -->
                         </div>

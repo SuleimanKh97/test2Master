@@ -1,17 +1,17 @@
-// src/app/Services/blog/blog.service.ts
+// src/app/services/blog/blog.service.ts
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams, HttpHeaders } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
-import { BlogPostSummaryDTO, BlogPostDetailDTO, CreateBlogPostDTO, UpdateBlogPostDTO, AdminBlogPostListDTO } from '../../Interfaces/blog.interface'; // Path should be correct now
+import { BlogPostSummaryDTO, BlogPostDetailDTO, CreateBlogPostDTO, UpdateBlogPostDTO, AdminBlogPostListDTO } from '../../interfaces/blog.interface';
 import { AuthService } from '../auth/auth.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class BlogService {
-  private baseApiUrl = 'https://localhost:7158/api'; // Adjust port if necessary
-  private blogApiUrl = `${this.baseApiUrl}/blog`;
-  private adminBlogApiUrl = `${this.baseApiUrl}/Admin/blogposts`;
+  private baseUrl = 'https://localhost:7158'; // *** Corrected Port ***
+  private blogApiUrl = `${this.baseUrl}/Blog`;
+  private adminBlogApiUrl = `${this.baseUrl}/Admin/blog`;
 
   constructor(private http: HttpClient, private authService: AuthService) { }
 
@@ -27,15 +27,19 @@ export class BlogService {
     });
   }
 
-  getBlogPosts(count: number = 100): Observable<BlogPostSummaryDTO[]> {
-    let params = new HttpParams().set('count', count.toString());
-    return this.http.get<BlogPostSummaryDTO[]>(this.blogApiUrl, { params });
+  getBlogPosts(): Observable<BlogPostSummaryDTO[]> {
+    return this.http.get<BlogPostSummaryDTO[]>(this.blogApiUrl);
+  }
+
+  getLatestBlogPosts(count: number = 3): Observable<BlogPostSummaryDTO[]> {
+    return this.http.get<BlogPostSummaryDTO[]>(`${this.blogApiUrl}/latest/${count}`);
   }
 
   getBlogPost(id: number): Observable<BlogPostDetailDTO> {
     return this.http.get<BlogPostDetailDTO>(`${this.blogApiUrl}/${id}`);
   }
 
+  // Admin methods
   getAllBlogPostsForAdmin(): Observable<AdminBlogPostListDTO[]> {
     const headers = this.getAuthHeaders();
     if (!headers) return of([]);
@@ -48,21 +52,21 @@ export class BlogService {
     return this.http.get<BlogPostDetailDTO>(`${this.adminBlogApiUrl}/${id}`, { headers });
   }
 
-  createBlogPost(postData: CreateBlogPostDTO): Observable<BlogPostDetailDTO> {
+  createBlogPost(postData: CreateBlogPostDTO): Observable<any> {
     const headers = this.getAuthHeaders();
-    if (!headers) return of({} as BlogPostDetailDTO);
-    return this.http.post<BlogPostDetailDTO>(this.adminBlogApiUrl, postData, { headers });
+    if (!headers) return of({});
+    return this.http.post<any>(this.adminBlogApiUrl, postData, { headers });
   }
 
-  updateBlogPost(id: number, postData: UpdateBlogPostDTO): Observable<void> {
+  updateBlogPost(id: number, postData: UpdateBlogPostDTO): Observable<any> {
     const headers = this.getAuthHeaders();
-    if (!headers) return new Observable<void>(obs => { obs.error('Not authenticated'); obs.complete(); });
-    return this.http.put<void>(`${this.adminBlogApiUrl}/${id}`, postData, { headers });
+    if (!headers) return of({});
+    return this.http.put<any>(`${this.adminBlogApiUrl}/${id}`, postData, { headers });
   }
 
-  deleteBlogPost(id: number): Observable<void> {
+  deleteBlogPost(id: number): Observable<any> {
     const headers = this.getAuthHeaders();
-    if (!headers) return new Observable<void>(obs => { obs.error('Not authenticated'); obs.complete(); });
-    return this.http.delete<void>(`${this.adminBlogApiUrl}/${id}`, { headers });
+    if (!headers) return of({});
+    return this.http.delete<any>(`${this.adminBlogApiUrl}/${id}`, { headers });
   }
 }

@@ -4,6 +4,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule, ReactiveFormsModule, } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ToastrModule } from 'ngx-toastr';
+import { CommonModule } from '@angular/common';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -35,12 +36,12 @@ import { AdminBlogPostFormComponent } from './admin/admin-blog-post-form/admin-b
     ContactComponent,
     LoginComponent,
     ProfileComponent,
-    AdminDashboardComponent,
-    AdminBlogListComponent,
-    AdminBlogPostFormComponent,
+    AdminDashboardComponent
   ],
   imports: [
     BrowserModule, HttpClientModule,
+    CommonModule,
+    ReactiveFormsModule,
     BrowserAnimationsModule,
     ToastrModule.forRoot({
       timeOut: 5000,
@@ -48,7 +49,7 @@ import { AdminBlogPostFormComponent } from './admin/admin-blog-post-form/admin-b
       preventDuplicates: true,
       progressBar: true,
     }),
-    AppRoutingModule, FormsModule, ReactiveFormsModule,
+    AppRoutingModule, FormsModule,
     AppComponent,
     HeaderComponent,
     FooterComponent,

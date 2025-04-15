@@ -1,8 +1,8 @@
 import { Component, OnInit, OnDestroy, AfterViewInit, ElementRef, Renderer2, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { AuthService } from '../Services/auth/auth.service'; // Import AuthService
-import { BlogService } from '../Services/blog/blog.service'; // Import BlogService
-import { BlogPostSummaryDTO } from '../Interfaces/blog.interface'; // Import DTO
+import { AuthService } from '../services/auth/auth.service'; // Fixed casing
+import { BlogService } from '../services/blog/blog.service'; // Fixed casing 
+import { BlogPostSummaryDTO } from '../interfaces/blog.interface'; // Fixed casing
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 
@@ -67,7 +67,7 @@ export class LandingPageComponent implements OnInit, OnDestroy, AfterViewInit {
 
     // --- Methods --- //
     private fetchLatestPosts(): void {
-        this.blogSubscription = this.blogService.getBlogPosts(3).subscribe({
+        this.blogSubscription = this.blogService.getLatestBlogPosts(3).subscribe({
             next: (posts: BlogPostSummaryDTO[]) => {
                 this.latestPosts = posts;
                 console.log('Landing Page: Fetched posts:', posts);

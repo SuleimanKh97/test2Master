@@ -34,7 +34,7 @@
                     <th scope="col">الصورة</th>
                     <th scope="col">الاسم</th>
                     <th scope="col">السعر</th>
-                    <th scope="col">الكمية المتاحة</th>
+                    <th scope="col">حالة المنتج</th>
                     <th scope="col">إجراءات</th>
                 </tr>
             </thead>
@@ -48,10 +48,8 @@
                     <td>{{ product.name }}</td>
                     <td>{{ product.price | currency:'JOD' }}</td> <!-- Adjust currency as needed -->
                     <td>
-                        <span
-                            [ngClass]="{'text-danger': product.stockQuantity === 0, 'text-success': product.stockQuantity > 0}">
-                            {{ product.stockQuantity > 0 ? product.stockQuantity : 'نفذت الكمية' }}
-                        </span>
+                        <span *ngIf="product.isSold" class="badge bg-danger">تم البيع</span>
+                        <span *ngIf="!product.isSold" class="badge bg-success">متاح للبيع</span>
                     </td>
                     <td>
                         <!-- Use routerLink to navigate to the edit page -->

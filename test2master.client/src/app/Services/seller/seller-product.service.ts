@@ -13,6 +13,7 @@ export interface SellerProduct {
     img?: string; // Image URL or path
     createdAt?: Date | string;
     sellerId?: number; // Backend might set this automatically based on auth
+    isSold?: boolean; // Property indicating if the product is sold
     // Remove fields not directly part of Product model like stockQuantity if handled differently
 }
 

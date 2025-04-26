@@ -7,6 +7,7 @@ interface UserProfile {
   email: string;
   role: string;
   createdAt: string; // Or Date
+  profileImage?: string; // URL لصورة الملف الشخصي
   // Add other fields if returned by API (like orders)
 }
 

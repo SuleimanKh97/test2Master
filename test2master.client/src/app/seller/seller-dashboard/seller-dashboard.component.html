@@ -1,75 +1,212 @@
 <!-- seller-dashboard.component.html -->
-<div class="container py-5 seller-dashboard" dir="rtl">
-  <h2 class="mb-4">لوحة تحكم البائع</h2>
+<div class="seller-dashboard rtl">
+  <!-- عنوان لوحة التحكم -->
+  <div class="dashboard-header">
+    <h1 class="dashboard-title">لوحة التحكم</h1>
+    <button class="refresh-btn" (click)="refreshData()">
+      <i class="fas fa-sync-alt"></i> تحديث البيانات
+    </button>
+  </div>
 
-  <!-- Loading Indicator -->
-  <div *ngIf="isLoading" class="d-flex justify-content-center my-5">
+  <!-- حالة تحميل البيانات -->
+  <div class="loading-container" *ngIf="isLoading">
     <div class="spinner-border text-primary" role="status">
-      <span class="visually-hidden">جارٍ التحميل...</span>
+      <span class="visually-hidden">جاري التحميل...</span>
     </div>
+    <p class="mt-2">جاري تحميل البيانات...</p>
   </div>
 
-  <!-- Error Message -->
-  <div *ngIf="errorMessage" class="alert alert-danger">
-    <i class="fas fa-exclamation-triangle me-2"></i> {{ errorMessage }}
+  <!-- رسالة الخطأ -->
+  <div class="alert-danger" *ngIf="errorMessage">
+    <i class="fas fa-exclamation-circle"></i> {{ errorMessage }}
   </div>
 
-  <!-- Dashboard Stats -->
-  <div *ngIf="!isLoading && !errorMessage">
-    <div *ngIf="dashboardStats$ | async as stats; else noStats">
-      <div class="row">
-        <!-- Total Products Card -->
-        <div class="col-md-4 mb-4">
-          <div class="card text-center h-100 shadow-sm">
-            <div class="card-body">
-              <div class="stat-icon text-primary mb-3"><i class="fas fa-box-open fa-3x"></i></div>
-              <h5 class="card-title">إجمالي المنتجات</h5>
-              <p class="card-text display-4 fw-bold">{{ stats.totalProducts }}</p>
-            </div>
-            <div class="card-footer bg-light">
-              <a routerLink="/seller/products" class="btn btn-sm btn-outline-primary">إدارة المنتجات</a>
-            </div>
-          </div>
+  <!-- محتوى لوحة التحكم -->
+  <div class="dashboard-content" *ngIf="!isLoading && !errorMessage">
+    <!-- البطاقات الإحصائية -->
+    <div class="stat-cards-container">
+      <div class="stat-card total-products">
+        <div class="stat-icon">
+          <i class="fas fa-box"></i>
         </div>
-
-        <!-- Total Orders Card -->
-        <div class="col-md-4 mb-4">
-          <div class="card text-center h-100 shadow-sm">
-            <div class="card-body">
-              <div class="stat-icon text-warning mb-3"><i class="fas fa-receipt fa-3x"></i></div>
-              <h5 class="card-title">إجمالي الطلبات</h5>
-              <p class="card-text display-4 fw-bold">{{ stats.totalOrders }}</p>
-              <!-- Add note about potential calculation inaccuracy if needed -->
-            </div>
-            <div class="card-footer bg-light">
-              <a routerLink="/seller/orders" class="btn btn-sm btn-outline-warning">إدارة الطلبات</a>
-            </div>
-          </div>
+        <div class="stat-info">
+          <h3>إجمالي المنتجات</h3>
+          <p class="stat-value">{{ totalProducts }}</p>
+          <p class="stat-label">
+            <span>{{ soldProducts }} مباع</span> &nbsp;|&nbsp;
+            <span>{{ availableProducts }} متاح</span>
+          </p>
         </div>
+      </div>
 
-        <!-- Total Revenue Card -->
-        <div class="col-md-4 mb-4">
-          <div class="card text-center h-100 shadow-sm">
-            <div class="card-body">
-              <div class="stat-icon text-success mb-3"><i class="fas fa-coins fa-3x"></i></div>
-              <h5 class="card-title">إجمالي الإيرادات</h5>
-              <p class="card-text display-4 fw-bold">{{ stats.totalRevenue | currency:'JOD':'symbol' }}</p>
-              <!-- Add note about potential calculation inaccuracy if needed -->
-            </div>
-            <div class="card-footer bg-light">
-              <span class="text-muted">بيانات تقديرية</span>
-            </div>
-          </div>
+      <div class="stat-card total-orders">
+        <div class="stat-icon">
+          <i class="fas fa-shopping-cart"></i>
+        </div>
+        <div class="stat-info">
+          <h3>إجمالي الطلبات</h3>
+          <p class="stat-value">{{ totalOrders }}</p>
+          <p class="stat-label">
+            طلب قيد المعالجة
+          </p>
+        </div>
+      </div>
+
+      <div class="stat-card total-revenue">
+        <div class="stat-icon">
+          <i class="fas fa-dollar-sign"></i>
+        </div>
+        <div class="stat-info">
+          <h3>إجمالي الإيرادات</h3>
+          <p class="stat-value">{{ totalRevenue | currency:'JOD':'symbol':'1.0-0' }}</p>
+          <p class="stat-label">إيرادات مستلمة</p>
         </div>
       </div>
     </div>
-    <ng-template #noStats>
-      <div *ngIf="!isLoading" class="alert alert-info">
-        لا توجد بيانات لعرضها في لوحة التحكم.
+
+    <!-- أقسام الرسوم البيانية -->
+    <!--<div class="charts-container">
+      <div class="chart-section">
+        <div class="section-header">
+          <h2>المبيعات الشهرية</h2>
+        </div>
+        <div class="chart-container">
+          <canvas id="monthlySalesChart"></canvas>
+        </div>
       </div>
-    </ng-template>
+
+      <div class="chart-section">
+        <div class="section-header">
+          <h2>حالة الطلبات</h2>
+        </div>
+        <div class="chart-container">
+          <canvas id="orderStatusChart"></canvas>
+        </div>
+      </div>
+    </div>-->
+
+    <!-- قسم الطلبات الحديثة -->
+    <div class="recent-orders-section">
+      <div class="section-header">
+        <h2>الطلبات الحديثة</h2>
+        <a [routerLink]="['/seller/orders']" class="view-all-link">
+          عرض الكل
+          <i class="fas fa-chevron-left"></i>
+        </a>
+      </div>
+
+      <!-- حالة تحميل بيانات الطلبات -->
+      <div class="loading-container small-loading" *ngIf="isOrdersLoading">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">جاري التحميل...</span>
+        </div>
+        <p class="mt-2">جاري تحميل الطلبات...</p>
+      </div>
+
+      <!-- رسالة خطأ الطلبات -->
+      <div class="alert-danger" *ngIf="ordersErrorMessage">
+        <i class="fas fa-exclamation-circle"></i>
+        {{ ordersErrorMessage }}
+      </div>
+
+      <!-- جدول الطلبات الحديثة -->
+      <div class="table-responsive" *ngIf="!isOrdersLoading && !ordersErrorMessage && recentOrders.length > 0">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>رقم الطلب</th>
+              <th>التاريخ</th>
+              <th>اسم المشتري</th>
+              <th>المبلغ</th>
+              <th>الحالة</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let order of recentOrders">
+              <td>#{{ order.orderId }}</td>
+              <td>{{ formatDate(order.date) }}</td>
+              <td>{{ order.buyerName }}</td>
+              <td>{{ order.totalAmount | currency:'JOD':'symbol':'1.0-0' }}</td>
+              <td>
+                <span class="status-badge" [ngClass]="'status-' + order.status.toLowerCase()">
+                  {{ order.status }}
+                </span>
+              </td>
+              
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- حالة عدم وجود طلبات -->
+      <div class="empty-state" *ngIf="!isOrdersLoading && !ordersErrorMessage && recentOrders.length === 0">
+        <i class="fas fa-inbox"></i>
+        <p>لا توجد طلبات حديثة</p>
+      </div>
+    </div>
+
+    <!-- قسم أعلى المنتجات مبيعًا -->
+    <!--<div class="top-products-section">
+      <div class="section-header">
+        <h2>أعلى المنتجات مبيعًا</h2>
+        <a [routerLink]="['/seller/products']" class="view-all-link">
+          عرض الكل
+          <i class="fas fa-chevron-left"></i>
+        </a>
+      </div>
+      <div class="table-responsive">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>المنتج</th>
+              <th>السعر</th>
+              <th>المبيعات</th>
+              <th>الإيرادات</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let product of topProducts">
+              <td>
+                <div class="product-info">
+                  <div class="product-img-container">
+                    <img [src]="product.imageUrl || 'assets/images/product-placeholder.png'" alt="{{ product.name }}"
+                      class="product-img">
+                  </div>
+                  <span class="product-name">{{ product.name }}</span>
+                </div>
+              </td>
+              <td>{{ product.price | currency:'JOD':'symbol':'1.0-0' }}</td>
+              <td>{{ product.salesCount }}</td>
+              <td>{{ product.revenue | currency:'JOD':'symbol':'1.0-0' }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>-->
+
+    <!-- قسم الروابط السريعة -->
+    <div class="quick-links-section">
+      <div class="section-header">
+        <h2>روابط سريعة</h2>
+      </div>
+      <div class="quick-links-container">
+        <a [routerLink]="['/seller/products/add']" class="quick-link-card">
+          <i class="fas fa-plus-circle"></i>
+          <span>إضافة منتج جديد</span>
+        </a>
+        <a [routerLink]="['/seller/orders']" class="quick-link-card">
+          <i class="fas fa-clipboard-list"></i>
+          <span>إدارة الطلبات</span>
+        </a>
+        <a [routerLink]="['/seller/profile']" class="quick-link-card">
+          <i class="fas fa-user-edit"></i>
+          <span>تعديل الملف الشخصي</span>
+        </a>
+        <a [routerLink]="['/seller/reports']" class="quick-link-card">
+          <i class="fas fa-chart-pie"></i>
+          <span>تقارير المبيعات</span>
+        </a>
+      </div>
+    </div>
   </div>
-
-  <!-- Removed product table - should be on a separate product management page -->
-
 </div>
